@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="538.0" prefWidth="489.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.AddAppointments_Controller">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cbd0d6" height="396.0" layoutX="31.0" layoutY="76.0" stroke="BLACK" strokeType="INSIDE" width="427.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffc921" height="123.0" layoutX="247.0" layoutY="104.0" stroke="BLACK" strokeType="INSIDE" width="194.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffc921" height="123.0" layoutX="247.0" layoutY="245.0" stroke="BLACK" strokeType="INSIDE" width="194.0" />
+      <TextField fx:id="apptID" alignment="CENTER" disable="true" layoutX="373.0" layoutY="43.0" prefHeight="26.0" prefWidth="86.0" text="Auto-generated">
+         <font>
+            <Font size="10.0" />
+         </font></TextField>
+      <Label layoutX="355.0" layoutY="47.0" text="ID" />
+      <TextField fx:id="apptTitle" layoutX="45.0" layoutY="159.0" />
+      <Label layoutX="45.0" layoutY="141.0" text="Title" />
+      <ComboBox fx:id="apptCustomerName" layoutX="45.0" layoutY="104.0" prefHeight="26.0" prefWidth="149.0" promptText="Customer Name" />
+      <TextField fx:id="apptDescription" layoutX="45.0" layoutY="216.0" />
+      <Label layoutX="45.0" layoutY="198.0" text="Description" />
+      <TextField fx:id="apptType" layoutX="45.0" layoutY="318.0" />
+      <Label layoutX="45.0" layoutY="300.0" text="Type" />
+      <DatePicker fx:id="apptStartDate" layoutX="257.0" layoutY="127.0" showWeekNumbers="true" />
+      <Label layoutX="257.0" layoutY="110.0" text="Date" />
+      <Label layoutX="31.0" layoutY="21.0" text="ADD APPOINTMENT">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Label>
+      <Button layoutX="325.0" layoutY="500.0" mnemonicParsing="false" onAction="#saveHandler" prefHeight="26.0" prefWidth="60.0" text="SAVE" />
+      <Button layoutX="398.0" layoutY="501.0" mnemonicParsing="false" onAction="#cancelHandler" text="CANCEL" />
+      <ComboBox fx:id="apptStartHour" layoutX="257.0" layoutY="161.0" prefHeight="26.0" prefWidth="86.0" promptText="Hour" />
+      <ComboBox fx:id="apptStartMin" layoutX="344.0" layoutY="161.0" prefHeight="26.0" prefWidth="86.0" promptText="Minute" />
+      <Label layoutX="248.0" layoutY="89.0" text="Start Date &amp; Time" />
+      <ToggleButton layoutX="257.0" layoutY="192.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="86.0" text="AM">
+         <toggleGroup>
+            <ToggleGroup fx:id="am_pm" />
+         </toggleGroup>
+      </ToggleButton>
+      <ToggleButton layoutX="342.0" layoutY="192.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="86.0" text="PM" toggleGroup="$am_pm" />
+      <DatePicker fx:id="apptEndDate" layoutX="257.0" layoutY="269.0" />
+      <Label layoutX="249.0" layoutY="230.0" text="End Date &amp; Time" />
+      <ComboBox fx:id="apptEndHour" layoutX="257.0" layoutY="302.0" prefHeight="26.0" prefWidth="86.0" promptText="Hour" />
+      <ComboBox fx:id="apptEndMin" layoutX="345.0" layoutY="302.0" prefHeight="26.0" prefWidth="86.0" promptText="Minute" />
+      <ToggleButton layoutX="257.0" layoutY="333.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="86.0" text="AM">
+         <toggleGroup>
+            <ToggleGroup fx:id="am_pmStart" />
+         </toggleGroup>
+      </ToggleButton>
+      <ToggleButton layoutX="345.0" layoutY="333.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="86.0" text="PM">
+         <toggleGroup>
+            <ToggleGroup fx:id="am_pmEnd" />
+         </toggleGroup>
+      </ToggleButton>
+      <Label layoutX="257.0" layoutY="251.0" text="Date" />
+      <TextField fx:id="apptLocation" layoutX="45.0" layoutY="268.0" />
+      <Label layoutX="45.0" layoutY="252.0" text="Location" />
+      <TextField fx:id="apptContactName" layoutX="45.0" layoutY="369.0" />
+      <Label layoutX="45.0" layoutY="350.0" text="Contact Name" />
+      <TextField fx:id="apptContactEmail" layoutX="45.0" layoutY="422.0" />
+      <Label layoutX="45.0" layoutY="403.0" text="Contact E-mail" />
+   </children>
+</AnchorPane>

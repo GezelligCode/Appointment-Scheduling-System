@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="517.0" prefWidth="1090.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.Appointments_Controller">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cbd0d6" height="380.0" layoutX="22.0" layoutY="108.0" stroke="BLACK" strokeType="INSIDE" width="1042.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffc921" height="59.0" layoutX="562.0" layoutY="413.0" stroke="TRANSPARENT" strokeType="INSIDE" width="240.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffc921" height="59.0" layoutX="316.0" layoutY="413.0" stroke="TRANSPARENT" strokeType="INSIDE" width="240.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffc921" height="59.0" layoutX="37.0" layoutY="413.0" stroke="TRANSPARENT" strokeType="INSIDE" width="273.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffc921" height="59.0" layoutX="808.0" layoutY="413.0" stroke="TRANSPARENT" strokeType="INSIDE" width="240.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="63.0" layoutX="35.0" layoutY="411.0" stroke="BLACK" strokeType="INSIDE" width="1014.0" />
+      <TableView fx:id="apptsTable" layoutX="37.0" layoutY="147.0" prefHeight="200.0" prefWidth="1012.0">
+        <columns>
+          <TableColumn fx:id="apptID" prefWidth="75.0" text="Appt_ID" />
+          <TableColumn fx:id="title" prefWidth="75.0" text="Title" />
+            <TableColumn fx:id="description" prefWidth="127.20002746582031" text="Description" />
+            <TableColumn fx:id="location" prefWidth="98.39996337890625" text="Location" />
+            <TableColumn fx:id="type" prefWidth="103.39999389648438" text="Type" />
+            <TableColumn fx:id="start" prefWidth="102.60003662109375" text="Start" />
+            <TableColumn fx:id="end" prefWidth="111.60003662109375" text="End" />
+            <TableColumn fx:id="customerID" prefWidth="122.0" text="Cust_ID" />
+            <TableColumn fx:id="userID" prefWidth="100.79998779296875" text="User_ID" />
+            <TableColumn fx:id="contactID" prefWidth="97.39996337890625" text="Contact_ID" />
+        </columns>
+      </TableView>
+      <Button layoutX="22.0" layoutY="71.0" mnemonicParsing="false" onAction="#customerMenuHandler" text="Customers" />
+      <Button layoutX="112.0" layoutY="71.0" mnemonicParsing="false" onAction="#consultantsMenuHandler" text="Consultants" />
+      <MenuButton fx:id="menuBar" layoutX="36.0" layoutY="347.0" mnemonicParsing="false" text="Edit Appointments">
+        <items>
+          <MenuItem mnemonicParsing="false" onAction="#addApptHandler" text="Add" />
+          <MenuItem mnemonicParsing="false" onAction="#modifyApptHandler" text="Modify" />
+            <MenuItem mnemonicParsing="false" onAction="#removeApptHandler" text="Delete" />
+        </items>
+      </MenuButton>
+      <ComboBox fx:id="customerFilter" layoutX="363.0" layoutY="430.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
+      <ComboBox fx:id="contactFilter" layoutX="608.0" layoutY="430.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
+      <ComboBox fx:id="monthFilter" layoutX="82.0" layoutY="431.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="108.0" />
+      <ComboBox fx:id="weekFilter" layoutX="188.0" layoutY="431.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="115.0" />
+      <ToggleButton fx:id="allTime" layoutX="42.0" layoutY="431.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
+      <ToggleButton fx:id="allCustomers" layoutX="323.0" layoutY="431.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
+      <ToggleButton fx:id="allContacts" layoutX="568.0" layoutY="430.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
+      <Label layoutX="440.0" layoutY="35.0" text="APPOINTMENTS">
+         <font>
+            <Font name="Droid Sans" size="30.0" />
+         </font></Label>
+      <Label layoutX="37.0" layoutY="387.0" text="Report Criteria">
+         <font>
+            <Font name="Droid Sans" size="19.0" />
+         </font>
+      </Label>
+      <Label layoutX="39.0" layoutY="123.0" text="Appointment List">
+         <font>
+            <Font name="Droid Sans" size="19.0" />
+         </font>
+      </Label>
+      <Label layoutX="82.0" layoutY="413.0" text="Month" />
+      <Label layoutX="190.0" layoutY="413.0" text="Week" />
+      <Label layoutX="363.0" layoutY="413.0" text="Customer" />
+      <Label layoutX="608.0" layoutY="413.0" text="Consultant" />
+      <ComboBox fx:id="typeFilter" layoutX="854.0" layoutY="430.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
+      <ToggleButton fx:id="allTypes" layoutX="814.0" layoutY="430.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
+      <Label layoutX="854.0" layoutY="413.0" text="Type" />
+   </children>
+</AnchorPane>

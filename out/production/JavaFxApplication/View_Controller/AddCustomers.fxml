@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="436.0" prefWidth="383.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.AddCustomers_Controller">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cbd0d6" height="297.0" layoutX="31.0" layoutY="86.0" stroke="BLACK" strokeType="INSIDE" width="318.0" />
+      <TextField fx:id="customerID" alignment="CENTER" editable="false" layoutX="265.0" layoutY="51.0" prefHeight="26.0" prefWidth="86.0">
+         <font>
+            <Font size="10.0" />
+         </font></TextField>
+      <Label layoutX="245.0" layoutY="55.0" text="ID" />
+      <TextField fx:id="customerAddress" layoutX="42.0" layoutY="180.0" prefHeight="26.0" prefWidth="294.0" />
+      <Label layoutX="43.0" layoutY="162.0" text="Address" />
+      <TextField fx:id="customerPostalCode" layoutX="45.0" layoutY="237.0" />
+      <Label layoutX="43.0" layoutY="219.0" text="Postal Code" />
+      <Label layoutX="31.0" layoutY="24.0" text="ADD CUSTOMER">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Label>
+      <Button layoutX="215.0" layoutY="391.0" mnemonicParsing="false" onAction="#saveHandler" prefHeight="26.0" prefWidth="60.0" text="SAVE" />
+      <Button layoutX="288.0" layoutY="392.0" mnemonicParsing="false" onAction="#cancelHandler" text="CANCEL" />
+      <TextField fx:id="customerPhone" layoutX="45.0" layoutY="289.0" />
+      <Label layoutX="43.0" layoutY="273.0" text="Phone" />
+      <TextField fx:id="customerName" layoutX="42.0" layoutY="126.0" prefHeight="26.0" prefWidth="294.0" />
+      <Label layoutX="43.0" layoutY="108.0" text="Name" />
+      <ComboBox fx:id="customerDivision" layoutX="42.0" layoutY="337.0" prefHeight="26.0" prefWidth="294.0" promptText="Division" />
+   </children>
+</AnchorPane>

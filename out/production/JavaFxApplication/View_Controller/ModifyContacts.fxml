@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="272.0" prefWidth="383.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.ModifyContacts_Controller">
+    <children>
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cbd0d6" height="134.0" layoutX="31.0" layoutY="76.0" stroke="BLACK" strokeType="INSIDE" width="318.0" />
+        <TextField fx:id="contactID" alignment="CENTER" disable="true" layoutX="264.0" layoutY="41.0" prefHeight="26.0" prefWidth="86.0">
+         <font>
+            <Font size="10.0" />
+         </font></TextField>
+        <Label layoutX="246.0" layoutY="45.0" text="ID" />
+        <TextField fx:id="contactEmail" layoutX="41.0" layoutY="160.0" prefHeight="26.0" prefWidth="295.0" />
+        <Label layoutX="42.0" layoutY="142.0" text="E-Mail" />
+        <Label layoutX="31.0" layoutY="14.0" text="MODIFY CONSULTANT">
+            <font>
+                <Font name="System Bold" size="18.0" />
+            </font></Label>
+        <Button layoutX="216.0" layoutY="221.0" mnemonicParsing="false" onAction="#saveHandler" prefHeight="26.0" prefWidth="60.0" text="SAVE" />
+        <Button layoutX="289.0" layoutY="222.0" mnemonicParsing="false" onAction="#cancelHandler" text="CANCEL" />
+        <TextField fx:id="contactName" layoutX="41.0" layoutY="106.0" prefHeight="26.0" prefWidth="295.0" />
+        <Label layoutX="42.0" layoutY="88.0" text="Name" />
+    </children>
+</AnchorPane>

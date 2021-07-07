@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="274.0" prefWidth="383.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.AddContacts_Controller">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cbd0d6" height="147.0" layoutX="31.0" layoutY="66.0" stroke="BLACK" strokeType="INSIDE" width="318.0" />
+      <TextField fx:id="contactID" alignment="CENTER" editable="false" layoutX="262.0" layoutY="30.0" prefHeight="26.0" prefWidth="86.0">
+         <font>
+            <Font size="10.0" />
+         </font></TextField>
+      <Label layoutX="248.0" layoutY="34.0" text="ID" />
+      <TextField fx:id="contactEmail" layoutX="42.0" layoutY="158.0" prefHeight="26.0" prefWidth="292.0" />
+      <Label layoutX="45.0" layoutY="140.0" text="E-Mail" />
+      <Label layoutX="31.0" layoutY="9.0" text="ADD CONSULTANT">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Label>
+      <Button layoutX="217.0" layoutY="229.0" mnemonicParsing="false" onAction="#saveHandler" prefHeight="26.0" prefWidth="60.0" text="SAVE" />
+      <Button layoutX="289.0" layoutY="230.0" mnemonicParsing="false" onAction="#cancelHandler" text="CANCEL" />
+      <TextField fx:id="contactName" layoutX="42.0" layoutY="104.0" prefHeight="26.0" prefWidth="292.0" />
+      <Label layoutX="43.0" layoutY="86.0" text="Name" />
+   </children>
+</AnchorPane>
