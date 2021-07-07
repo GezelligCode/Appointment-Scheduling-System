@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="601.0" prefWidth="822.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.Customers_Controller">
+   <children>
+      <TableView fx:id="customersTable" layoutX="35.0" layoutY="95.0" onMouseClicked="#updateAssociatedApptsTable" prefHeight="200.0" prefWidth="752.0">
+        <columns>
+          <TableColumn fx:id="customerID" prefWidth="44.80000305175781" text="ID" />
+          <TableColumn fx:id="customerName" prefWidth="152.79999542236328" text="Name" />
+            <TableColumn fx:id="customerAddress" prefWidth="178.4000244140625" text="Address" />
+            <TableColumn fx:id="customerPostalCode" prefWidth="94.199951171875" text="Postal Code" />
+            <TableColumn fx:id="customerPhone" prefWidth="102.60000610351562" text="Phone" />
+            <TableColumn fx:id="customerDivision" prefWidth="185.79998779296875" text="Division" />
+        </columns>
+      </TableView>
+      <Button layoutX="746.0" layoutY="14.0" mnemonicParsing="false" onAction="#cancelHandler" text="Back" />
+       <TableView fx:id="assocApptsTable" layoutX="35.0" layoutY="359.0" prefHeight="200.0" prefWidth="752.0">
+           <columns>
+               <TableColumn fx:id="apptID" prefWidth="75.0" text="Appt_ID" />
+               <TableColumn fx:id="title" prefWidth="75.0" text="Title" />
+               <TableColumn fx:id="description" prefWidth="75.0" text="Description" />
+               <TableColumn fx:id="location" prefWidth="75.0" text="Location" />
+               <TableColumn fx:id="type" prefWidth="75.0" text="Type" />
+               <TableColumn fx:id="start" prefWidth="75.0" text="Start" />
+               <TableColumn fx:id="end" prefWidth="75.0" text="End" />
+               <TableColumn fx:id="assocCustomerID" prefWidth="75.0" text="Cust_ID" />
+               <TableColumn fx:id="userID" prefWidth="75.0" text="User_ID" />
+               <TableColumn fx:id="contactID" prefWidth="75.0" text="Contact_ID" />
+           </columns>
+       </TableView>
+      <Label layoutX="35.0" layoutY="334.0" text="Associated Appointments">
+         <font>
+            <Font name="Droid Sans" size="19.0" />
+         </font></Label>
+      <Label layoutX="331.0" layoutY="22.0" text="CUSTOMERS">
+         <font>
+            <Font name="Droid Sans" size="30.0" />
+         </font></Label>
+      <MenuButton fx:id="menuBar" layoutX="35.0" layoutY="295.0" mnemonicParsing="false" text="Edit Customers">
+        <items>
+          <MenuItem mnemonicParsing="false" onAction="#addCustomerHandler" text="Add" />
+          <MenuItem mnemonicParsing="false" onAction="#modifyCustomerHandler" text="Modify" />
+            <MenuItem mnemonicParsing="false" onAction="#deleteHandler" text="Delete" />
+        </items>
+      </MenuButton>
+      <Label layoutX="35.0" layoutY="71.0" text="Customer List">
+         <font>
+            <Font name="Droid Sans" size="19.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

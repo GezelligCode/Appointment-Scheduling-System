@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="614.0" prefWidth="830.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.Contacts_Controller">
+   <children>
+      <TableView fx:id="contactsTable" layoutX="35.0" layoutY="101.0" onMouseClicked="#updateAssociatedApptsTable" prefHeight="200.0" prefWidth="752.0">
+        <columns>
+          <TableColumn fx:id="contactID" prefWidth="68.80000305175781" text="ID" />
+          <TableColumn fx:id="contactName" prefWidth="342.3999710083008" text="Name" />
+            <TableColumn fx:id="contactEmail" prefWidth="341.4000549316406" text="E-Mail" />
+        </columns>
+      </TableView>
+      <Button layoutX="746.0" layoutY="32.0" mnemonicParsing="false" onAction="#cancelHandler" text="Back" />
+       <TableView fx:id="assocApptsTable" layoutX="37.0" layoutY="369.0" prefHeight="200.0" prefWidth="752.0">
+           <columns>
+               <TableColumn fx:id="apptID" prefWidth="75.0" text="Appt_ID" />
+               <TableColumn fx:id="title" prefWidth="75.0" text="Title" />
+               <TableColumn fx:id="description" prefWidth="75.0" text="Description" />
+               <TableColumn fx:id="location" prefWidth="75.0" text="Location" />
+               <TableColumn fx:id="type" prefWidth="75.0" text="Type" />
+               <TableColumn fx:id="start" prefWidth="75.0" text="Start" />
+               <TableColumn fx:id="end" prefWidth="75.0" text="End" />
+               <TableColumn fx:id="assocCustomerID" prefWidth="75.0" text="Cust_ID" />
+               <TableColumn fx:id="userID" prefWidth="75.0" text="User_ID" />
+               <TableColumn fx:id="assocContactID" prefWidth="75.0" text="Contact_ID" />
+           </columns>
+       </TableView>
+      <Label layoutX="37.0" layoutY="343.0" text="Associated Appointments">
+         <font>
+            <Font name="Droid Sans" size="19.0" />
+         </font></Label>
+      <Label layoutX="315.0" layoutY="27.0" text="CONSULTANTS">
+         <font>
+            <Font name="Droid Sans" size="30.0" />
+         </font></Label>
+      <MenuButton fx:id="menuBar" layoutX="35.0" layoutY="301.0" mnemonicParsing="false" text="Edit Consultants">
+        <items>
+          <MenuItem mnemonicParsing="false" onAction="#addContactHandler" text="Add" />
+          <MenuItem mnemonicParsing="false" onAction="#modifyContactHandler" text="Modify" />
+            <MenuItem mnemonicParsing="false" onAction="#deleteContactHandler" text="Delete" />
+        </items>
+      </MenuButton>
+      <Label layoutX="35.0" layoutY="75.0" text="Consultant List">
+         <font>
+            <Font name="Droid Sans" size="19.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
