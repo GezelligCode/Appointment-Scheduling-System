@@ -1,6 +1,7 @@
 package View_Controller;
 
 import Credentials.Credentials;
+import DBAccess.DBAppointments;
 import DBAccess.DBCountries;
 import DBAccess.DBUsers;
 import Database.DBConnection;
@@ -20,16 +21,22 @@ import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Login_Controller implements Initializable
 {
     @FXML private TextField userName;
     @FXML private PasswordField userPassword;
     @FXML private Label zoneID;
+
+    private static final TimeZone gmtTimeZone = TimeZone.getTimeZone("GMT+0");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
@@ -47,15 +54,11 @@ public class Login_Controller implements Initializable
     {
         Locale currentLocale = Locale.getDefault();
 
-        Time time = Time.valueOf(LocalTime.now());
         String zone = ZoneId.systemDefault().toString();
         zoneID.setText("System Zone: " + zone);
 
-        FXMLLoader fxmlLoader = new FXMLLoader();
-
-        //fxmlLoader.setResources(ResourceBundle.getBundle("Login_Controller", currentLocale));
+        // Check if appt is occurring within 15 minutes of time now. i.e., "appt's start <= time now".
         System.out.println(currentLocale.getDisplayLanguage());
-
     }
 
     public void loginHandler(ActionEvent event) throws IOException
@@ -66,6 +69,8 @@ public class Login_Controller implements Initializable
             DBConnection.startConnection();
             DBCountries.checkDateConversion();
             DBUsers.loginUser(userName.getText().toString(), userPassword.getText().toString());
+
+            imminentApptCheck();
 
             // redirect to Appts
             Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
@@ -86,5 +91,43 @@ public class Login_Controller implements Initializable
     }
 
 
+    public static Date getUTCDateForLocalDate()
+    {
+        Calendar local = Calendar.getInstance();
+
+        int offset = local.getTimeZone().getOffset(local.getTimeInMillis());
+
+        GregorianCalendar utc = new GregorianCalendar(gmtTimeZone);
+
+        utc.setTimeInMillis(local.getTimeInMillis());
+        utc.add(Calendar.MINUTE, 15);
+        utc.add(Calendar.MILLISECOND, -offset);
+
+        return utc.getTime();
+    }
+
+    public void imminentApptCheck()
+    {
+        //Get time now in UTC
+        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        Timestamp utcTimestamp = Timestamp.valueOf(formatter.format(getUTCDateForLocalDate()));
+        System.out.println(utcTimestamp);
+
+        int numberOfAppts = DBAppointments.checkImminentAppointments(utcTimestamp);
+        String is_are = "are";
+        String appt_appts = "appointments";
+        if(!(numberOfAppts == 0 || numberOfAppts > 1))
+        {
+            is_are = "is";
+            appt_appts = "appointment";
+        }
+
+        Alert alert = new Alert((Alert.AlertType.INFORMATION));
+        alert.setTitle("Appointments");
+        alert.setHeaderText("Upcoming Appointments");
+        alert.setContentText("There " + is_are + " " + numberOfAppts + " " + appt_appts + " in the next 15 minutes.");
+        alert.showAndWait();
+
+    }
 
 }

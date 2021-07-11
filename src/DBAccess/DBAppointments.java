@@ -7,10 +7,7 @@ import Model.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 
 public class DBAppointments
 {
@@ -1326,7 +1323,6 @@ public class DBAppointments
 
     public static void addAppointment(Appointment appt, Timestamp tsStart, Timestamp tsEnd)
     {
-        //boolean flag for added
         int apptID = 0;
         int userID = appt.getUserID();
         int customerID = appt.getCustomerID();
@@ -1342,7 +1338,6 @@ public class DBAppointments
 
         try
         {
-            //Todo: Finish SQL statement below
             String sql = "INSERT INTO appointments(Appointment_ID, Title, Description, Location, Type, Start, End, " +
                     "Created_By, Customer_ID, User_ID, Contact_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -1439,5 +1434,32 @@ public class DBAppointments
 
             return false;
         }
+    }
+
+    public static int checkImminentAppointments(Timestamp timeNowPlus15Mins)
+    {
+        int apptCounter = 0;
+
+        try
+        {
+            String sql = "SELECT Appointment_ID, Title FROM appointments WHERE Start >= now() AND Start <= ?";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ps.setTimestamp(1, timeNowPlus15Mins);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next())
+            {
+                apptCounter++;
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return apptCounter;
     }
 }
