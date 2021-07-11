@@ -153,10 +153,5 @@ public class ModifyCustomers_Controller implements Initializable
         customerCountry.setValue(DBCustomers.getCustomerCountry(selectedCustomer));
         customerDivision.setValue(selectedCustomer.getCustomerDivisionName());
 
-//        System.out.println(DBCustomers.getCustomerCountry(selectedCustomer));
-//        System.out.println("Customer Division ID " + selectedCustomer.getCustomerDivisionID());
-//        System.out.println("Country ID by Division ID " + DBDivisions.getCountryIDByDivisionID(selectedCustomer.getCustomerDivisionID()));
-//        System.out.println("Country Name by Country ID " + DBCountries.getCountryNameByID(DBDivisions.getCountryIDByDivisionID(selectedCustomer.getCustomerDivisionID())));
-
     }
 }

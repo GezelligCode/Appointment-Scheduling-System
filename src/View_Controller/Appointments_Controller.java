@@ -990,7 +990,11 @@ public class Appointments_Controller implements Initializable
             if(DBAppointments.removeAppt(appt))
             {
                 updateApptsTable();
-                System.out.println("Appt removed");
+                Alert alert = new Alert((Alert.AlertType.INFORMATION));
+                alert.setTitle("Appointments");
+                alert.setHeaderText("Cancellation Complete");
+                alert.setContentText("Appointment " + appt.getApptID() + " - " + appt.getType() + " is cancelled.");
+                alert.showAndWait();
             }
             else
             {
