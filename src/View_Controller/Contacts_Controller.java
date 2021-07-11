@@ -94,10 +94,6 @@ public class Contacts_Controller implements Initializable
 
     public void deleteContactHandler(ActionEvent event) throws IOException
     {
-        //ToDo Add an if-then check whether the customer to be deleted is in an appointment. If so, then advise
-        // the user that the customer cannot be deleted until the associated appointments are deleted.
-        // Idea: Maybe include a window/table view for associated appointments.
-        // Maybe implement an evaluation of whether the count of customer's appointments is greater than zero.
         Contact contact = contactsTable.getSelectionModel().getSelectedItem();
 
         if(contact != null)
@@ -107,7 +103,11 @@ public class Contacts_Controller implements Initializable
                 if(DBContacts.removeContact(contact))
                 {
                     updateContactsTable();
-                    System.out.println("Contact removed");
+                    Alert alert = new Alert((Alert.AlertType.INFORMATION));
+                    alert.setTitle("Contacts");
+                    alert.setHeaderText("Successful Deletion");
+                    alert.setContentText(contact.getContactName() + " is removed.");
+                    alert.showAndWait();
                 }
                 else
                 {
@@ -119,7 +119,7 @@ public class Contacts_Controller implements Initializable
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Contacts");
                 alert.setHeaderText("Contact Has Associated Appointments");
-                alert.setContentText("Please remove the associated appointment(s) for " + contact.getContactName() +
+                alert.setContentText("Please remove the associated appointment(s) for \n" + contact.getContactName() +
                         " before removing " + contact.getContactName()+".");
                 alert.showAndWait();
             }
