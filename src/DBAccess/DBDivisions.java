@@ -40,6 +40,37 @@ public class DBDivisions
         return divisionList;
     }
 
+    public static ObservableList<String> getAllDivisionsByCountry(String country)
+    {
+        ObservableList<String> divisionList = FXCollections.observableArrayList();
+
+        //Get country ID by country name
+        int countryID = DBCountries.getCountryIDByName(country);
+
+        try
+        {
+            String sql = "SELECT * from first_level_divisions WHERE Country_ID = ?";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ps.setInt(1, countryID);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next())
+            {
+                String division = rs.getString("Division");
+                divisionList.add(division);
+            }
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return divisionList;
+    }
+
     public static int getDivisionIDByName(String name)
     {
         int divisionID = 0;
@@ -100,4 +131,35 @@ public class DBDivisions
 
         return divisionName;
     }
+
+    public static Integer getCountryIDByDivisionID(int divisionID)
+    {
+        int countryID = 0;
+
+        try
+        {
+            String sql = "SELECT COUNTRY_ID FROM first_level_divisions WHERE Division_ID = ?";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setInt(1, divisionID);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next())
+            {
+                countryID = rs.getInt("COUNTRY_ID");
+            }
+            else
+            {
+                System.out.println("No country ID by that division ID is found");
+            }
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return countryID;
+    }
+
 }

@@ -1,8 +1,10 @@
 package View_Controller;
 
+import DBAccess.DBCountries;
 import DBAccess.DBCustomers;
 import DBAccess.DBDivisions;
 import DBAccess.DBUsers;
+import Model.Country;
 import Model.Customer;
 import Model.Division;
 import javafx.collections.FXCollections;
@@ -32,6 +34,7 @@ public class ModifyCustomers_Controller implements Initializable
     @FXML private TextField customerPostalCode;
     @FXML private TextField customerPhone;
     @FXML private ComboBox customerDivision;
+    @FXML private ComboBox customerCountry;
 
     private Customer selectedCustomer = getSelectedCustomer();
 
@@ -40,10 +43,53 @@ public class ModifyCustomers_Controller implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         customerID.setDisable(true);
-
-        customerDivision.setItems(divisions());
+        customerCountry.setItems(countryList());
+        customerDivision.setItems(divisionList());
 
         setFields();
+    }
+
+    public void countrySelectionHandler()
+    {
+        String countrySelected = customerCountry.getValue().toString();
+
+        customerDivision.setItems(divisionsFilteredByCountry(countrySelected));
+    }
+
+    public ObservableList countryList()
+    {
+        ObservableList<String> countries = FXCollections.observableArrayList();
+
+        for(Country country : DBCountries.getAllCountries())
+        {
+            countries.add(country.getCountry());
+        }
+
+        return countries;
+    }
+
+    public ObservableList divisionList()
+    {
+        ObservableList<String> divisions = FXCollections.observableArrayList();
+
+        for(Division division : DBDivisions.getAllDivisions())
+        {
+            divisions.add(division.getDivision());
+        }
+
+        return divisions;
+    }
+
+    public ObservableList divisionsFilteredByCountry(String country)
+    {
+        ObservableList<String> divisions = FXCollections.observableArrayList();
+
+        for(String divisionName : DBDivisions.getAllDivisionsByCountry(country))
+        {
+            divisions.add(divisionName);
+        }
+
+        return divisions;
     }
 
     public void saveHandler(ActionEvent event) throws IOException
@@ -104,7 +150,13 @@ public class ModifyCustomers_Controller implements Initializable
         customerAddress.setText(selectedCustomer.getCustomerAddress());
         customerPostalCode.setText(selectedCustomer.getCustomerPostalCode());
         customerPhone.setText(selectedCustomer.getCustomerPhone());
+        customerCountry.setValue(DBCustomers.getCustomerCountry(selectedCustomer));
         customerDivision.setValue(selectedCustomer.getCustomerDivisionName());
+
+//        System.out.println(DBCustomers.getCustomerCountry(selectedCustomer));
+//        System.out.println("Customer Division ID " + selectedCustomer.getCustomerDivisionID());
+//        System.out.println("Country ID by Division ID " + DBDivisions.getCountryIDByDivisionID(selectedCustomer.getCustomerDivisionID()));
+//        System.out.println("Country Name by Country ID " + DBCountries.getCountryNameByID(DBDivisions.getCountryIDByDivisionID(selectedCustomer.getCustomerDivisionID())));
 
     }
 }

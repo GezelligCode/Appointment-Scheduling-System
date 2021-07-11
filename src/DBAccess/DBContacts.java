@@ -42,6 +42,33 @@ public class DBContacts
         return contactList;
     }
 
+    public static ObservableList<String> getAllContactNames()
+    {
+        ObservableList<String> contactNameList = FXCollections.observableArrayList();
+
+        try
+        {
+            String sql = "SELECT * from contacts";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next())
+            {
+                String name = rs.getString("Contact_Name");
+
+                contactNameList.add(name);
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return contactNameList;
+    }
+
     public static void addContact(Contact contact)
     {
         int contactID = 0;

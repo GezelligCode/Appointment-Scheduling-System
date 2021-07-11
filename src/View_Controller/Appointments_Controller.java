@@ -930,8 +930,6 @@ public class Appointments_Controller implements Initializable
 
     public void customerMenuHandler(ActionEvent event) throws IOException
     {
-
-
         // Redirect to Customers Screen
         Parent customers = FXMLLoader.load(getClass().getResource("Customers.fxml"));
         Scene scene = new Scene(customers);

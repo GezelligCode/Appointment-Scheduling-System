@@ -32,6 +32,7 @@ public class AddCustomers_Controller implements Initializable
     @FXML private TextField customerAddress;
     @FXML private TextField customerPostalCode;
     @FXML private TextField customerPhone;
+    @FXML private ComboBox customerCountry;
     @FXML private ComboBox customerDivision;
 
     @Override
@@ -39,19 +40,51 @@ public class AddCustomers_Controller implements Initializable
     {
         customerID.setDisable(true);
         customerID.setText("Auto-generated");
-        customerDivision.setItems(divisions());
+        customerCountry.setItems(countryList());
+        customerDivision.setItems(divisionList());
     }
 
-    public ObservableList divisions()
+    public void countrySelectionHandler()
     {
-        ObservableList<String> divisionList = FXCollections.observableArrayList();
+        String countrySelected = customerCountry.getValue().toString();
 
-        for(Division div : DBDivisions.getAllDivisions())
+        customerDivision.setItems(divisionsFilteredByCountry(countrySelected));
+    }
+
+    public ObservableList countryList()
+    {
+        ObservableList<String> countries = FXCollections.observableArrayList();
+
+        for(Country country : DBCountries.getAllCountries())
         {
-            divisionList.add(div.getDivision());
+            countries.add(country.getCountry());
         }
 
-        return divisionList;
+        return countries;
+    }
+
+    public ObservableList divisionList()
+    {
+        ObservableList<String> divisions = FXCollections.observableArrayList();
+
+        for(Division division : DBDivisions.getAllDivisions())
+        {
+            divisions.add(division.getDivision());
+        }
+
+        return divisions;
+    }
+
+    public ObservableList divisionsFilteredByCountry(String country)
+    {
+        ObservableList<String> divisions = FXCollections.observableArrayList();
+
+        for(String divisionName : DBDivisions.getAllDivisionsByCountry(country))
+        {
+            divisions.add(divisionName);
+        }
+
+        return divisions;
     }
 
     public void saveHandler(ActionEvent event) throws IOException

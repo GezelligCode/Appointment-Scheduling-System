@@ -40,6 +40,68 @@ public class DBCountries
         return countryList;
     }
 
+    public static int getCountryIDByName(String name)
+    {
+        int countryID = 0;
+
+        try
+        {
+            String sql = "SELECT * from countries WHERE country = ?";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ps.setString(1, name);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next())
+            {
+                countryID = rs.getInt("Country_ID");
+            }
+            else
+            {
+                System.out.println("No country ID by that name is found.");
+            }
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return countryID;
+    }
+
+    public static String getCountryNameByID(int ID)
+    {
+        String countryName = null;
+
+        try
+        {
+            String sql = "SELECT * from countries WHERE COUNTRY_ID = ?";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ps.setInt(1, ID);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next())
+            {
+                countryName = rs.getString("Country");
+            }
+            else
+            {
+                System.out.println("No country name by that ID is found.");
+            }
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return countryName;
+    }
+
     public static void checkDateConversion()
     {
         System.out.println("CREATE DATE TEST");

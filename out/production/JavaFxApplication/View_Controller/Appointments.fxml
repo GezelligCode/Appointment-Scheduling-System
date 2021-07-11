@@ -36,13 +36,13 @@
             <MenuItem mnemonicParsing="false" onAction="#removeApptHandler" text="Delete" />
         </items>
       </MenuButton>
-      <ComboBox fx:id="customerFilter" layoutX="363.0" layoutY="430.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
-      <ComboBox fx:id="contactFilter" layoutX="608.0" layoutY="430.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
-      <ComboBox fx:id="monthFilter" layoutX="82.0" layoutY="431.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="108.0" />
-      <ComboBox fx:id="weekFilter" layoutX="188.0" layoutY="431.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="115.0" />
-      <ToggleButton fx:id="allTime" layoutX="42.0" layoutY="431.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
-      <ToggleButton fx:id="allCustomers" layoutX="323.0" layoutY="431.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
-      <ToggleButton fx:id="allContacts" layoutX="568.0" layoutY="430.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
+      <ComboBox fx:id="customerFilter" layoutX="363.0" layoutY="434.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
+      <ComboBox fx:id="contactFilter" layoutX="608.0" layoutY="434.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
+      <ComboBox fx:id="monthFilter" layoutX="82.0" layoutY="434.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="108.0" />
+      <ComboBox fx:id="weekFilter" layoutX="188.0" layoutY="434.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="115.0" />
+      <ToggleButton fx:id="allTime" layoutX="42.0" layoutY="434.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
+      <ToggleButton fx:id="allCustomers" layoutX="323.0" layoutY="434.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
+      <ToggleButton fx:id="allContacts" layoutX="568.0" layoutY="434.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
       <Label layoutX="440.0" layoutY="35.0" text="APPOINTMENTS">
          <font>
             <Font name="Droid Sans" size="30.0" />
@@ -57,12 +57,12 @@
             <Font name="Droid Sans" size="19.0" />
          </font>
       </Label>
-      <Label layoutX="82.0" layoutY="413.0" text="Month" />
-      <Label layoutX="190.0" layoutY="413.0" text="Week" />
-      <Label layoutX="363.0" layoutY="413.0" text="Customer" />
-      <Label layoutX="608.0" layoutY="413.0" text="Consultant" />
-      <ComboBox fx:id="typeFilter" layoutX="854.0" layoutY="430.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
-      <ToggleButton fx:id="allTypes" layoutX="814.0" layoutY="430.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
-      <Label layoutX="854.0" layoutY="413.0" text="Type" />
+      <Label layoutX="82.0" layoutY="416.0" text="Month" />
+      <Label layoutX="190.0" layoutY="416.0" text="Week" />
+      <Label layoutX="363.0" layoutY="416.0" text="Customer" />
+      <Label layoutX="608.0" layoutY="416.0" text="Consultant" />
+      <ComboBox fx:id="typeFilter" layoutX="854.0" layoutY="434.0" onAction="#filterHandler" prefHeight="26.0" prefWidth="186.0" />
+      <ToggleButton fx:id="allTypes" layoutX="814.0" layoutY="434.0" mnemonicParsing="false" onAction="#resetFilterHandler" text="All" />
+      <Label layoutX="854.0" layoutY="416.0" text="Type" />
    </children>
 </AnchorPane>

@@ -19,8 +19,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -38,12 +41,16 @@ public class AddAppointments_Controller implements Initializable
     @FXML private DatePicker apptEndDate;
     @FXML private ComboBox apptEndHour;
     @FXML private ComboBox apptEndMin;
-    @FXML private TextField apptContactName;
+    @FXML private ComboBox apptContactName;
     @FXML private TextField apptContactEmail;
+    @FXML private ToggleGroup am_pmStart;
+    @FXML private ToggleGroup am_pmEnd;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+        apptContactEmail.setDisable(true);
+        apptContactName.setItems(DBContacts.getAllContactNames());
         apptStartHour.setItems(apptHour());
         apptStartMin.setItems(apptMin());
 
@@ -53,9 +60,9 @@ public class AddAppointments_Controller implements Initializable
         apptCustomerName.setItems(customers());
     }
 
-    private ObservableList<Integer> selectableHour = FXCollections.observableArrayList();
-    private ObservableList<String> selectableMinute = FXCollections.observableArrayList();
-    private ObservableList<String> customerList = FXCollections.observableArrayList();
+    private final ObservableList<Integer> selectableHour = FXCollections.observableArrayList();
+    private final ObservableList<String> selectableMinute = FXCollections.observableArrayList();
+    private final ObservableList<String> customerList = FXCollections.observableArrayList();
 
     public ObservableList customers()
     {
@@ -67,15 +74,14 @@ public class AddAppointments_Controller implements Initializable
         return customerList;
     }
 
-
-    public void saveHandler(ActionEvent event) throws IOException
+    public void contactEmailHandler() throws IOException
     {
-        // Upon saving, the DBAccess method, addAppt can be called.
+        String contactName = apptContactName.getValue().toString();
 
-        // So at minimum, the form needs to produce the following elements of the Appointment object:
-        // int Appt ID, String title, String description, String location, String type, String start, String end,
-        // int customerID, int userID, int contactID
+        apptContactEmail.setText(DBContacts.getContactEmailByID(DBContacts.getContactIDByName(contactName)));
+    }
 
+    public void saveHandler(ActionEvent event) throws IOException, ParseException {
         int ApptID = 0;
         String customer = apptCustomerName.getValue().toString();
         String title = apptTitle.getText();
@@ -84,11 +90,9 @@ public class AddAppointments_Controller implements Initializable
         String type = apptType.getText();
         Timestamp start = startTimeStamper();
         Timestamp end = endTimeStamper();
-        String contactName = apptContactName.getText();
+        String contactName = apptContactName.getValue().toString();
         String contactEmail = apptContactEmail.getText();
-        //ToDo generate contactID from Customers Class, based on name input
         Contact contact = new Contact(contactName, contactEmail);
-        //Todo Compare code for adding contacts to code for adding customers and see if an error is found for contacts
 
         DBContacts.addContact(contact);
 
@@ -119,28 +123,37 @@ public class AddAppointments_Controller implements Initializable
         window.show();
     }
 
-    public Timestamp startTimeStamper()
+    public Timestamp startTimeStamper() throws ParseException
     {
-        return getTimestamp(apptStartDate, apptStartHour, apptStartMin);
+        return getTimestamp(apptStartDate, apptStartHour, apptStartMin, am_pmStart);
     }
 
-    public Timestamp endTimeStamper()
+    public Timestamp endTimeStamper() throws ParseException
     {
-        return getTimestamp(apptEndDate, apptEndHour, apptEndMin);
+        return getTimestamp(apptEndDate, apptEndHour, apptEndMin, am_pmEnd);
     }
 
-    private Timestamp getTimestamp(DatePicker datePicker, ComboBox hourPicker, ComboBox minutePicker)
+    private Timestamp getTimestamp(DatePicker datePicker, ComboBox hourPicker, ComboBox minutePicker, ToggleGroup am_pm) throws ParseException
     {
         String date = datePicker.getValue().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
 
         String hour = hourPicker.getValue().toString();
-
         String min = minutePicker.getValue().toString();
 
-        String concatTimeStamp = date + " " + hour + ":" + min + ":00";
+        ToggleButton selectedToggleButton = (ToggleButton) am_pm.getSelectedToggle();
+        String am_pmValue = selectedToggleButton.getText();
+
+        String time = hour + ":" + min + " " + am_pmValue;
+
+        SimpleDateFormat date12Format = new SimpleDateFormat("hh:mm a");
+        SimpleDateFormat date24Format = new SimpleDateFormat("HH:mm");
+        String time24HourFormat = date24Format.format(date12Format.parse(time));
+
+        String concatTimeStamp = date + " " + time24HourFormat + ":00";
 
         return Timestamp.valueOf(concatTimeStamp);
     }
+
 
     public ObservableList apptHour()
     {
@@ -148,7 +161,10 @@ public class AddAppointments_Controller implements Initializable
 
         for(Integer H : hours)
         {
-            selectableHour.add(H);
+            if(!(selectableHour.contains(H)))
+            {
+                selectableHour.add(H);
+            }
         }
 
         return selectableHour;
@@ -160,7 +176,10 @@ public class AddAppointments_Controller implements Initializable
 
         for(String M : mins)
         {
-            selectableMinute.add(M);
+            if(!(selectableMinute.contains(M)))
+            {
+                selectableMinute.add(M);
+            }
         }
 
         return selectableMinute;

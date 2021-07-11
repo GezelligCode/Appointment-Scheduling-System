@@ -240,4 +240,40 @@ public class DBCustomers
 
         return customerName;
     }
+
+    public static Integer getCustomerDivisionID(Customer customer)
+    {
+        int customerID = customer.getCustomerID();
+        int divisionID = 0;
+
+        try
+        {
+            String sql = "SELECT Division_ID FROM customers WHERE Customer_ID = ?";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setInt(1, customerID);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next())
+            {
+                divisionID = rs.getInt("Division_ID");
+            }
+            else
+            {
+                System.out.println("No division ID by that customer ID is found");
+            }
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return divisionID;
+    }
+
+    public static String getCustomerCountry(Customer customer)
+    {
+       return DBCountries.getCountryNameByID(DBDivisions.getCountryIDByDivisionID(DBCustomers.getCustomerDivisionID(customer)));
+    }
 }

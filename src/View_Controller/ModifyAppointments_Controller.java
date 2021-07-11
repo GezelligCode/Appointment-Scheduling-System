@@ -17,15 +17,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ResourceBundle;
 
 public class ModifyAppointments_Controller implements Initializable
@@ -42,8 +44,14 @@ public class ModifyAppointments_Controller implements Initializable
     @FXML private DatePicker apptEndDate;
     @FXML private ComboBox apptEndHour;
     @FXML private ComboBox apptEndMin;
-    @FXML private TextField apptContactName;
+    @FXML private ComboBox apptContactName;
     @FXML private TextField apptContactEmail;
+    @FXML private ToggleGroup am_pmStart;
+    @FXML private ToggleButton startAM;
+    @FXML private ToggleButton startPM;
+    @FXML private ToggleGroup am_pmEnd;
+    @FXML private ToggleButton endAM;
+    @FXML private  ToggleButton endPM;
 
     private Appointment appt = getSelectedAppt();
     private ObservableList<Integer> selectableHour = FXCollections.observableArrayList();
@@ -54,6 +62,8 @@ public class ModifyAppointments_Controller implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         apptID.setDisable(true);
+        apptContactEmail.setDisable(true);
+        apptContactName.setItems(DBContacts.getAllContactNames());
 
         apptStartHour.setItems(apptHour());
         apptStartMin.setItems(apptMin());
@@ -63,10 +73,24 @@ public class ModifyAppointments_Controller implements Initializable
 
         apptCustomerName.setItems(customers());
 
-        setFields();
+        try
+        {
+            setFields();
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    public void saveHandler(ActionEvent event) throws IOException
+    public void contactEmailHandler() throws IOException
+    {
+        String contactName = apptContactName.getValue().toString();
+
+        apptContactEmail.setText(DBContacts.getContactEmailByID(DBContacts.getContactIDByName(contactName)));
+    }
+
+    public void saveHandler(ActionEvent event) throws IOException, ParseException
     {
         int apptID = appt.getApptID();
         String title = apptTitle.getText();
@@ -80,7 +104,7 @@ public class ModifyAppointments_Controller implements Initializable
         int customerID = DBCustomers.getCustomerIDByName(apptCustomerName.getValue().toString());
         int userID = DBUsers.getCurrentUserID();
         //ToDo same as ToDo above; need better way to get ID than by name.
-        int contactID = DBContacts.getContactIDByName(apptContactName.getText());
+        int contactID = DBContacts.getContactIDByName(apptContactName.getValue().toString());
 
 
         Appointment modifiedAppt = new Appointment(apptID, title, description, location, type, start, end, customerID,
@@ -113,30 +137,38 @@ public class ModifyAppointments_Controller implements Initializable
         window.show();
     }
 
-    public Timestamp startTimeStamper()
+    public Timestamp startTimeStamper() throws ParseException
     {
-        return getTimestamp(apptStartDate, apptStartHour, apptStartMin);
+        return getTimestamp(apptStartDate, apptStartHour, apptStartMin, am_pmStart);
     }
 
-    public Timestamp endTimeStamper()
+    public Timestamp endTimeStamper() throws ParseException
     {
-        return getTimestamp(apptEndDate, apptEndHour, apptEndMin);
+        return getTimestamp(apptEndDate, apptEndHour, apptEndMin, am_pmEnd);
     }
 
-    private Timestamp getTimestamp(DatePicker datePicker, ComboBox hourPicker, ComboBox minutePicker)
+    private Timestamp getTimestamp(DatePicker datePicker, ComboBox hourPicker, ComboBox minutePicker, ToggleGroup am_pm) throws ParseException
     {
         String date = datePicker.getValue().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
 
         String hour = hourPicker.getValue().toString();
-
         String min = minutePicker.getValue().toString();
 
-        String concatTimeStamp = date + " " + hour + ":" + min + ":00";
+        ToggleButton selectedToggleButton = (ToggleButton) am_pm.getSelectedToggle();
+        String am_pmValue = selectedToggleButton.getText();
+
+        String time = hour + ":" + min + " " + am_pmValue;
+
+        SimpleDateFormat date12Format = new SimpleDateFormat("hh:mm a");
+        SimpleDateFormat date24Format = new SimpleDateFormat("HH:mm");
+        String time24HourFormat = date24Format.format(date12Format.parse(time));
+
+        String concatTimeStamp = date + " " + time24HourFormat + ":00";
 
         return Timestamp.valueOf(concatTimeStamp);
     }
 
-    public void setFields()
+    public void setFields() throws ParseException
     {
         apptID.setText(Integer.toString(appt.getApptID()));
         apptTitle.setText(appt.getTitle());
@@ -145,12 +177,19 @@ public class ModifyAppointments_Controller implements Initializable
         apptLocation.setText(appt.getLocation());
         apptType.setText(appt.getType());
         apptStartDate.setValue(appt.getStart().toLocalDateTime().toLocalDate());
-        apptStartHour.setValue(appt.getStart().toLocalDateTime().getHour());
-        apptStartMin.setValue(appt.getStart().toLocalDateTime().getMinute());
         apptEndDate.setValue(appt.getEnd().toLocalDateTime().toLocalDate());
-        apptEndHour.setValue(appt.getEnd().toLocalDateTime().getHour());
-        apptEndMin.setValue(appt.getEnd().toLocalDateTime().getMinute());
-        apptContactName.setText(DBContacts.getContactNameByID(appt.getContactID()));
+
+        // Use this as the input to the converter function
+        Timestamp tStart = appt.getStart();
+        timeConverter(tStart, am_pmStart, apptStartHour);
+
+        Timestamp tEnd = appt.getEnd();
+        timeConverter(tEnd, am_pmEnd, apptEndHour);
+
+        apptStartMin.setValue(String.format("%02d", appt.getStart().toLocalDateTime().getMinute()));
+        apptEndMin.setValue(String.format("%02d", appt.getEnd().toLocalDateTime().getMinute()));
+
+        apptContactName.setValue(DBContacts.getContactNameByID(appt.getContactID()));
         apptContactEmail.setText(DBContacts.getContactEmailByID(appt.getContactID()));
     }
 
@@ -170,7 +209,10 @@ public class ModifyAppointments_Controller implements Initializable
 
         for(Integer H : hours)
         {
-            selectableHour.add(H);
+            if(!(selectableHour.contains(H)))
+            {
+                selectableHour.add(H);
+            }
         }
 
         return selectableHour;
@@ -182,10 +224,83 @@ public class ModifyAppointments_Controller implements Initializable
 
         for(String M : mins)
         {
-            selectableMinute.add(M);
+            if(!(selectableMinute.contains(M)))
+            {
+                selectableMinute.add(M);
+            }
         }
 
         return selectableMinute;
     }
 
+    public void timeConverter(Timestamp datetime, ToggleGroup start_end, ComboBox hour)
+    {
+
+        String hourInput = String.valueOf(datetime.toLocalDateTime().getHour());
+        System.out.println("Hour input :"+hourInput);
+        System.out.println("Hour cmbox source: " + hour.getId());
+
+        int hourNumber = Integer.parseInt(hourInput);
+        int hourBase = 12;
+        int hourDiff = hourNumber - hourBase;
+
+        if(hour.getId() == apptStartHour.getId())
+        {
+            if (hourNumber == 0 || (hourNumber >= 1 && hourNumber <= 11))
+            {
+                start_end.selectToggle(startAM);
+
+                if (hourNumber == 0)
+                {
+                    hour.setValue("12");
+                }
+                else
+                {
+                    hour.setValue(String.valueOf(hourNumber));
+                }
+            }
+            else if (hourNumber >= 12 && hourNumber <= 23)
+            {
+                start_end.selectToggle(startPM);
+
+                if (hourNumber == 12)
+                {
+                    apptStartHour.setValue(String.valueOf(hourNumber));
+                }
+                else
+                {
+                    apptStartHour.setValue(String.valueOf(hourDiff));
+                }
+            }
+        }
+        else if(hour.getId() == apptEndHour.getId())
+        {
+            if(hourNumber == 0 || (hourNumber >= 1 && hourNumber <= 11))
+            {
+                start_end.selectToggle(endAM);
+
+                if(hourNumber == 0)
+                {
+                    hour.setValue("12");
+                }
+                else
+                {
+                    hour.setValue((String.valueOf(hourNumber)));
+                }
+            }
+            else if(hourNumber >= 12 && hourNumber <= 23)
+            {
+                start_end.selectToggle(endPM);
+
+                if(hourNumber == 12)
+                {
+                    apptEndHour.setValue(String.valueOf(hourNumber));
+                }
+                else
+                {
+                    apptEndHour.setValue(String.valueOf(hourDiff));
+                }
+            }
+        }
+    }
 }

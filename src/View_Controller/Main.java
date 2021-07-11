@@ -17,17 +17,13 @@ public class Main extends Application
     {
         Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
         primaryStage.setTitle("WGU Appointments System");
-        primaryStage.setScene(new Scene(root, 600, 324));
+        primaryStage.setScene(new Scene(root, 600, 350));
         primaryStage.show();
     }
 
-
-
     public static void main(String[] args)
     {
-
         launch(args);
         DBConnection.closedConnection();
-
     }
 }
