@@ -1,5 +1,6 @@
 package Model;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -19,6 +20,8 @@ public class Appointment
     private int customerID;
     private int userID;
     private int contactID;
+    private Date date;
+    private Time time;
 
     public Appointment(int apptID, String title, String description, String location, String type, Timestamp start,
                        Timestamp end, int customerID, int userID, int contactID)
@@ -35,6 +38,13 @@ public class Appointment
         this.contactID = contactID;
     }
 
+    // Constructor for holding imminent appointments
+    public Appointment(int apptID, Date date, Time time)
+    {
+        this.apptID = apptID;
+        this.date = date;
+        this.time = time;
+    }
 
     public int getApptID()
     {
@@ -130,5 +140,14 @@ public class Appointment
         this.contactID = ID;
     }
 
+    public Date getApptDate()
+    {
+        return this.date;
+    }
+
+    public Time getApptTime()
+    {
+        return this.time;
+    }
 
 }

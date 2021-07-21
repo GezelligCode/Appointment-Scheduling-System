@@ -5,6 +5,8 @@ import DBAccess.DBAppointments;
 import DBAccess.DBCountries;
 import DBAccess.DBUsers;
 import Database.DBConnection;
+import Model.Appointment;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -20,15 +22,10 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class Login_Controller implements Initializable
 {
@@ -111,9 +108,8 @@ public class Login_Controller implements Initializable
         //Get time now in UTC
         SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         Timestamp utcTimestamp = Timestamp.valueOf(formatter.format(getUTCDateForLocalDate()));
-        System.out.println(utcTimestamp);
 
-        int numberOfAppts = DBAppointments.checkImminentAppointments(utcTimestamp);
+        int numberOfAppts = DBAppointments.checkImminentAppointments();
         String is_are = "are";
         String appt_appts = "appointments";
         if(!(numberOfAppts == 0 || numberOfAppts > 1))
@@ -125,9 +121,32 @@ public class Login_Controller implements Initializable
         Alert alert = new Alert((Alert.AlertType.INFORMATION));
         alert.setTitle("Appointments");
         alert.setHeaderText("Upcoming Appointments");
-        alert.setContentText("There " + is_are + " " + numberOfAppts + " " + appt_appts + " in the next 15 minutes.");
+        alert.setContentText("There " + is_are + " " + numberOfAppts + " " + appt_appts + " in the next 15 minutes. \n" +
+                imminentAppointmentListing(DBAppointments.getImminentAppts()));
         alert.showAndWait();
 
+    }
+
+    public String imminentAppointmentListing(ObservableList<Appointment> imminentAppts)
+    {
+        String imminentApptListing = "";
+
+        for(Appointment appt : imminentAppts)
+        {
+            if(imminentApptListing.isEmpty())
+            {
+                imminentApptListing = String.valueOf(appt.getApptID()) + ": " + String.valueOf(appt.getApptDate()) +
+                        " " + String.valueOf(appt.getApptTime()) + "\n";
+            }
+            else
+            {
+                imminentApptListing = imminentApptListing +
+                        String.valueOf(appt.getApptID()) + ": " + String.valueOf(appt.getApptDate()) +
+                        " " + String.valueOf(appt.getApptTime()) + "\n";
+            }
+        }
+
+        return imminentApptListing;
     }
 
 }

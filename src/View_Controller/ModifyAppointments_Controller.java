@@ -26,9 +26,14 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 public class ModifyAppointments_Controller implements Initializable
 {
@@ -110,21 +115,23 @@ public class ModifyAppointments_Controller implements Initializable
         Appointment modifiedAppt = new Appointment(apptID, title, description, location, type, start, end, customerID,
                 userID, contactID);
 
-        if(DBAppointments.updateAppt(modifiedAppt))
+        if(DBAppointments.validateBusinessHours(modifiedAppt))
         {
-            System.out.println("Appointment updated successfully");
-            // Switch to Appts Scene
-            Parent Appointments = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
-            Scene scene = new Scene(Appointments);
-            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            window.setScene(scene);
-            window.show();
+            if(DBAppointments.updateAppt(modifiedAppt))
+            {
+                System.out.println("Appointment updated successfully");
+                // Switch to Appts Scene
+                Parent Appointments = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
+                Scene scene = new Scene(Appointments);
+                Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                window.setScene(scene);
+                window.show();
+            }
+            else
+            {
+                System.out.println("Check form for errors");
+            }
         }
-        else
-        {
-            System.out.println("Check form for errors");
-        }
-
     }
 
     public void cancelHandler(ActionEvent event) throws IOException

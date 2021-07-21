@@ -6,11 +6,18 @@ import Model.Contact;
 import Model.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 
 public class DBAppointments
 {
+    private static ObservableList<Appointment> imminentAppointments = FXCollections.observableArrayList();
+
     public static ObservableList<Appointment> getAllAppointments()
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -1436,23 +1443,25 @@ public class DBAppointments
         }
     }
 
-    public static int checkImminentAppointments(Timestamp timeNowPlus15Mins)
+    public static int checkImminentAppointments()
     {
         int apptCounter = 0;
 
         try
         {
-            String sql = "SELECT Appointment_ID, Title FROM appointments WHERE Start >= now() AND Start <= ?";
+            String sql = "SELECT Appointment_ID, date(start), time(start) FROM appointments WHERE Start >= UTC_TIME() " +
+                    "AND Start <= date_add(UTC_TIMESTAMP(), INTERVAL 15 minute)";
 
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-
-            ps.setTimestamp(1, timeNowPlus15Mins);
 
             ResultSet rs = ps.executeQuery();
 
             while(rs.next())
             {
+                Appointment imminentAppointment = new Appointment(rs.getInt("Appointment_ID"),
+                        rs.getDate("date(start)"), rs.getTime("time(start)"));
                 apptCounter++;
+                imminentAppointments.add(imminentAppointment);
             }
         }
         catch(SQLException throwables)
@@ -1461,5 +1470,58 @@ public class DBAppointments
         }
 
         return apptCounter;
+    }
+
+    public static ObservableList getImminentAppts()
+    {
+        return imminentAppointments;
+    }
+
+    public static boolean validateBusinessHours(Appointment appt)
+    {
+        ZoneId currentZoneId = ZoneId.systemDefault();
+        ZoneId estZoneId = ZoneId.of("America/New_York");
+
+        ZonedDateTime zonedStartDateTimeEST = appt.getStart().toInstant().atZone(estZoneId);
+        ZonedDateTime zonedEndDateTimeEST = appt.getEnd().toInstant().atZone(estZoneId);
+        int apptYear = appt.getStart().toLocalDateTime().getYear();
+        int apptMonth = appt.getStart().toLocalDateTime().getMonth().getValue();
+        int apptDay = appt.getStart().toLocalDateTime().getDayOfMonth();
+        int apptHourAM = 8;
+        int apptHourPM = 22;
+        int apptMin = 00;
+        int apptSec = 00;
+
+        LocalDateTime startTime = LocalDateTime.of(apptYear, apptMonth, apptDay, apptHourAM, apptMin, apptSec);
+        LocalDateTime endTime = LocalDateTime.of(apptYear, apptMonth, apptDay, apptHourPM, apptMin, apptSec);
+
+        ChronoZonedDateTime zonedStartTime = ZonedDateTime.of(startTime, estZoneId);
+        ChronoZonedDateTime zonedEndTime = ZonedDateTime.of(endTime, estZoneId);
+
+        System.out.println("ZonedStartTime: " + zonedStartTime);
+        System.out.println("ZonedEndTime: " + zonedEndTime);
+
+        if(zonedStartDateTimeEST.isBefore(zonedStartTime))
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Appointments");
+            alert.setHeaderText("Appointment Time is Outside of Office Hours");
+            alert.setContentText("Appointment cannot occur before 8:00AM EST. \n Office hours are from 8AM to 10PM EST.");
+            alert.showAndWait();
+            return false;
+        }
+        else if(zonedEndDateTimeEST.isAfter(zonedEndTime) || zonedStartDateTimeEST.isAfter(zonedEndTime))
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Appointments");
+            alert.setHeaderText("Appointment Time is Outside of Office Hours");
+            alert.setContentText("Appointment cannot occur after 10:00PM EST. \nOffice hours are from 8AM to 10PM EST.");
+            alert.showAndWait();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }

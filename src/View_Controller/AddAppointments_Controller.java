@@ -16,6 +16,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.converter.LocalDateTimeStringConverter;
+import javafx.util.converter.LocalTimeStringConverter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +26,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
+import java.time.*;
+import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
@@ -81,7 +84,10 @@ public class AddAppointments_Controller implements Initializable
         apptContactEmail.setText(DBContacts.getContactEmailByID(DBContacts.getContactIDByName(contactName)));
     }
 
-    public void saveHandler(ActionEvent event) throws IOException, ParseException {
+    public void saveHandler(ActionEvent event) throws IOException, ParseException
+    {
+        ZoneId currentZoneId = ZoneId.systemDefault();
+        ZoneId estZoneId = ZoneId.of("America/New_York");
         int ApptID = 0;
         String customer = apptCustomerName.getValue().toString();
         String title = apptTitle.getText();
@@ -91,10 +97,6 @@ public class AddAppointments_Controller implements Initializable
         Timestamp start = startTimeStamper();
         Timestamp end = endTimeStamper();
         String contactName = apptContactName.getValue().toString();
-        String contactEmail = apptContactEmail.getText();
-        Contact contact = new Contact(contactName, contactEmail);
-
-        DBContacts.addContact(contact);
 
         int contactID = DBContacts.getContactIDByName(contactName);
         int customerID = DBCustomers.getCustomerIDByName(customer);
@@ -102,15 +104,17 @@ public class AddAppointments_Controller implements Initializable
 
         Appointment appt = new Appointment(ApptID, title, description, location, type, start, end, customerID, userID, contactID);
 
-        DBAppointments.addAppointment(appt, start, end);
+        if(DBAppointments.validateBusinessHours(appt))
+        {
+            DBAppointments.addAppointment(appt, start, end);
+            // Switch to Appts Scene
+            Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
+            Scene scene = new Scene(addProduct);
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            window.setScene(scene);
+            window.show();
+        }
 
-
-        // Switch to Appts Scene
-        Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
-        Scene scene = new Scene(addProduct);
-        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        window.setScene(scene);
-        window.show();
     }
 
     public void cancelHandler(ActionEvent event) throws IOException
