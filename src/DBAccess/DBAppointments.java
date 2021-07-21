@@ -1524,4 +1524,76 @@ public class DBAppointments
             return true;
         }
     }
+
+    public static boolean validateApptOverlap(Appointment appt)
+    {
+        String overlappingAppts = new String();
+
+        for(Appointment a : DBAppointments.getAllAppointments())
+        {
+            if(a.getApptID() != appt.getApptID())
+            {
+                // If selected appt starts within another appt
+                if((appt.getStart().after(a.getStart()) || appt.getStart().equals(a.getStart())) &&
+                        (appt.getStart().before(a.getEnd()) || appt.getStart().equals(a.getEnd())))
+                {
+                    if(overlappingAppts.isEmpty())
+                    {
+                        overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
+                    }
+                    else
+                    {
+                        overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
+                    }
+                }
+                // If selected appt ends within another appt
+                else if((appt.getEnd().before(a.getEnd()) || appt.getEnd().equals(a.getEnd())) &&
+                        (appt.getEnd().after(a.getStart()) || appt.getEnd().equals(a.getStart())))
+                {
+                    if(overlappingAppts.isEmpty())
+                    {
+                        overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
+                    }
+                    else
+                    {
+                        overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
+                    }
+                }
+                else if(a.getStart().after(appt.getStart()) && a.getEnd().before(appt.getEnd()))
+                {
+                    if(overlappingAppts.isEmpty())
+                    {
+                        overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
+                    }
+                    else
+                    {
+                        overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+        if(overlappingAppts.isEmpty())
+        {
+            return true;
+        }
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Appointments");
+            alert.setHeaderText("Appointment Time Overlaps with Pre-existing Appointment(s)");
+            alert.setContentText(overlappingAppts);
+            alert.showAndWait();
+            return false;
+        }
+    }
 }

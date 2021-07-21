@@ -86,8 +86,6 @@ public class AddAppointments_Controller implements Initializable
 
     public void saveHandler(ActionEvent event) throws IOException, ParseException
     {
-        ZoneId currentZoneId = ZoneId.systemDefault();
-        ZoneId estZoneId = ZoneId.of("America/New_York");
         int ApptID = 0;
         String customer = apptCustomerName.getValue().toString();
         String title = apptTitle.getText();
@@ -106,15 +104,17 @@ public class AddAppointments_Controller implements Initializable
 
         if(DBAppointments.validateBusinessHours(appt))
         {
-            DBAppointments.addAppointment(appt, start, end);
-            // Switch to Appts Scene
-            Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
-            Scene scene = new Scene(addProduct);
-            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            window.setScene(scene);
-            window.show();
+            if(DBAppointments.validateApptOverlap(appt))
+            {
+                DBAppointments.addAppointment(appt, start, end);
+                // Switch to Appts Scene
+                Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
+                Scene scene = new Scene(addProduct);
+                Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                window.setScene(scene);
+                window.show();
+            }
         }
-
     }
 
     public void cancelHandler(ActionEvent event) throws IOException
@@ -157,7 +157,6 @@ public class AddAppointments_Controller implements Initializable
 
         return Timestamp.valueOf(concatTimeStamp);
     }
-
 
     public ObservableList apptHour()
     {

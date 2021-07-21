@@ -117,19 +117,22 @@ public class ModifyAppointments_Controller implements Initializable
 
         if(DBAppointments.validateBusinessHours(modifiedAppt))
         {
-            if(DBAppointments.updateAppt(modifiedAppt))
+            if(DBAppointments.validateApptOverlap(modifiedAppt))
             {
-                System.out.println("Appointment updated successfully");
-                // Switch to Appts Scene
-                Parent Appointments = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
-                Scene scene = new Scene(Appointments);
-                Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                window.setScene(scene);
-                window.show();
-            }
-            else
-            {
-                System.out.println("Check form for errors");
+                if(DBAppointments.updateAppt(modifiedAppt))
+                {
+                    System.out.println("Appointment updated successfully");
+                    // Switch to Appts Scene
+                    Parent Appointments = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
+                    Scene scene = new Scene(Appointments);
+                    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    window.setScene(scene);
+                    window.show();
+                }
+                else
+                {
+                    System.out.println("Check form for errors");
+                }
             }
         }
     }
