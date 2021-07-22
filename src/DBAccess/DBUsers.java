@@ -17,7 +17,7 @@ public class DBUsers
     {
         try
         {
-            String sql = "SELECT users.User_ID, users.User_Name " + "FROM users WHERE users.User_Name = ? " +
+            String sql = "SELECT users.User_ID, users.User_Name FROM users WHERE users.User_Name = ? " +
                     "AND users.Password = ?";
 
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);

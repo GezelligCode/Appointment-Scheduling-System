@@ -158,7 +158,6 @@ public class Customers_Controller implements Initializable
         customerPostalCode.setCellValueFactory(new PropertyValueFactory<>("customerPostalCode"));
         customerPhone.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
         customerDivision.setCellValueFactory(new PropertyValueFactory<>("customerDivisionName"));
-        //customerCountry.setCellValueFactory(new PropertyValueFactory<>("Country"));
     }
 
     private void updateCustomersTable()

@@ -8,7 +8,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -742,7 +745,7 @@ public class DBAppointments
             while(rs.next())
             {
                 if(typeName.equals(rs.getString("Type")) && week.equals(rs.getString("weekStartDate")) &&
-                       contact_ID == rs.getInt("Contact_ID"));
+                       contact_ID == rs.getInt("Contact_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -1596,4 +1599,122 @@ public class DBAppointments
             return false;
         }
     }
+
+    public static ObservableList<String> rankContactsByApptCount(ObservableList<Appointment> filteredAppts)
+    {
+        String contactWithCountofAppts = "";
+        ObservableList<String> contactsRankedByApptCount = FXCollections.observableArrayList();
+
+        try
+        {
+            String sql = "SELECT Contact_ID, COUNT(*) as Count from appointments GROUP BY Contact_ID ORDER BY Count DESC";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next())
+            {
+                contactWithCountofAppts = DBContacts.getContactNameByID(rs.getInt("Contact_ID")) + " - "
+                        + Integer.parseInt(rs.getString("Count"));
+                contactsRankedByApptCount.add(contactWithCountofAppts);
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return contactsRankedByApptCount;
+    }
+
+    public static ObservableList<String> rankContactsByApptTime(ObservableList<Appointment> filteredAppts)
+    {
+        String contactsRanked = "";
+        ObservableList<String> contactsRankedByTime = FXCollections.observableArrayList();
+        double totalHours = 0;
+        try
+        {
+            String sql = "SELECT Contact_ID, timestampdiff(SECOND, Start, End) as timeDiff from appointments ORDER BY timeDiff desc";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next())
+            {
+                totalHours = Double.parseDouble(rs.getString("timeDiff"));
+                //Convert Seconds to Hours
+                BigDecimal bd = new BigDecimal(totalHours/3600).setScale(2, RoundingMode.HALF_UP);
+                String totalHrsString = String.valueOf(bd);
+                contactsRanked = DBContacts.getContactNameByID(rs.getInt("Contact_ID")) + " - " + totalHrsString;
+                contactsRankedByTime.add(contactsRanked);
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return contactsRankedByTime;
+    }
+
+    public static ObservableList<String> rankDivisionsByCustomerCount(ObservableList<Appointment> filteredAppts)
+    {
+        String divisionsRanked = "";
+        ObservableList<String> divisionsRankedByCustomerCount = FXCollections.observableArrayList();
+
+        try
+        {
+            String sql = "SELECT Division, COUNT(*) AS Count from first_level_divisions INNER JOIN customers ON " +
+                    "first_level_divisions.Division_ID = customers.Division_ID GROUP BY Division ORDER BY Count DESC";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next())
+            {
+                divisionsRanked = rs.getString("Division") + " - "
+                        + Integer.parseInt(rs.getString("Count"));
+                divisionsRankedByCustomerCount.add(divisionsRanked);
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return divisionsRankedByCustomerCount;
+    }
+
+    public static ObservableList<String> rankTypesByApptCount(ObservableList<Appointment> filteredAppts)
+    {
+        String typesRanked = "";
+        ObservableList<String> typesRankedByCustomerCount = FXCollections.observableArrayList();
+
+        try
+        {
+            String sql = "SELECT Type, COUNT(*) as Count from appointments GROUP BY Type ORDER BY Count DESC";
+
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next())
+            {
+                typesRanked = rs.getString("Type") + " - "
+                        + Integer.parseInt(rs.getString("Count"));
+                typesRankedByCustomerCount.add(typesRanked);
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return typesRankedByCustomerCount;
+    }
+
+
 }

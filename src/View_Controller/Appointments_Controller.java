@@ -1,8 +1,8 @@
 package View_Controller;
 
 import DBAccess.DBAppointments;
-import DBAccess.DBContacts;
 import Model.Appointment;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,11 +18,8 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalTime;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 
 public class Appointments_Controller implements Initializable
 {
@@ -38,6 +35,18 @@ public class Appointments_Controller implements Initializable
     @FXML private TableColumn<Appointment, Integer> userID;
     @FXML private TableColumn<Appointment, Integer> contactID;
 
+    @FXML private TableView contactsByApptCt;
+    @FXML private TableColumn<String, String> contactName;
+
+    @FXML private TableView contactsByApptTime;
+    @FXML private TableColumn<String, String> contactApptTimeRanking;
+
+    @FXML private TableView divisionsByCustomerCt;
+    @FXML private TableColumn<String, String> divisionRankings;
+
+    @FXML private TableView typesByApptCt;
+    @FXML private TableColumn<String, String> typeRankings;
+
     @FXML private MenuButton menuBar;
     @FXML private ToggleButton allTime;
     @FXML private ToggleButton allCustomers;
@@ -48,14 +57,13 @@ public class Appointments_Controller implements Initializable
     @FXML private ComboBox customerFilter;
     @FXML private ComboBox contactFilter;
     @FXML private ComboBox typeFilter;
-
-
+    @FXML private Label apptCtr;
+    @FXML private Label reportVariables;
 
     //private boolean defaultFilter = true;
     private boolean apptsInitialized = false;
 
     private static Appointment selectedAppt = null;
-
 
     public static Appointment getSelectedAppt()
     {
@@ -73,9 +81,9 @@ public class Appointments_Controller implements Initializable
         customerFilter.setItems(customerNames());
         contactFilter.setItems(contactNames());
         typeFilter.setItems(typeNames());
+        updateApptCtr();
+        reportVariables.setText(" - All Appointments");
     }
-
-
 
     public void resetFilterHandler(ActionEvent event) throws IOException
     {
@@ -91,24 +99,32 @@ public class Appointments_Controller implements Initializable
                 monthFilter.getSelectionModel().clearSelection();
                 weekFilter.getSelectionModel().clearSelection();
                 apptsTable.setItems(DBAppointments.getAllAppointments());
+                updateApptCtr();
+                reportVariables.setText(" - All Appointments");
             }
             else if(!(allCustomers.isSelected()) && allContacts.isSelected() && allTypes.isSelected())
             {
                 // All appointments filtered by selected customer
                 String customerName = customerFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByCustomer(customerName));
+                updateApptCtr();
+                reportVariables.setText(" - " + customerName);
             }
             else if(allCustomers.isSelected() && !(allContacts.isSelected()) && allTypes.isSelected())
             {
                 // All appointments filtered by selected contact
                 String contactName = contactFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByContact(contactName));
+                updateApptCtr();
+                reportVariables.setText(" - " + contactName);
             }
             else if(allCustomers.isSelected() && allContacts.isSelected() && !(allTypes.isSelected()))
             {
                 // All appointments filtered by selected type
                 String typeName = typeFilter.getValue().toString();
                 apptsTable.setItems((DBAppointments.filterApptsViewByType(typeName)));
+                updateApptCtr();
+                reportVariables.setText(" - " + typeName);
             }
             else if(allCustomers.isSelected() && !(allContacts.isSelected()) && !(allTypes.isSelected()))
             {
@@ -116,6 +132,8 @@ public class Appointments_Controller implements Initializable
                 String typeName = typeFilter.getValue().toString();
                 String contactName = contactFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByContactAndType(contactName, typeName));
+                updateApptCtr();
+                reportVariables.setText(" - " + contactName + " & " + typeName);
             }
             else if(!(allCustomers.isSelected()) && allContacts.isSelected() && !(allTypes.isSelected()))
             {
@@ -123,6 +141,8 @@ public class Appointments_Controller implements Initializable
                 String customerName = customerFilter.getValue().toString();
                 String typeName = typeFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByCustomerAndType(customerName, typeName));
+                updateApptCtr();
+                reportVariables.setText(" - " + customerName + " & " + typeName);
             }
             else if(!(allCustomers.isSelected()) && !(allContacts.isSelected()) && allTypes.isSelected())
             {
@@ -130,6 +150,8 @@ public class Appointments_Controller implements Initializable
                 String customerName = customerFilter.getValue().toString();
                 String contactName = contactFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByCustomerAndContact(customerName, contactName));
+                updateApptCtr();
+                reportVariables.setText(" - " + customerName + " & " + contactName);
             }
             else if(!(allCustomers.isSelected()) && !(allContacts.isSelected()) && !(allTypes.isSelected()))
             {
@@ -138,6 +160,8 @@ public class Appointments_Controller implements Initializable
                 String contactName = contactFilter.getValue().toString();
                 String typeName = typeFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByCustomerContactType(customerName, contactName, typeName));
+                updateApptCtr();
+                reportVariables.setText(" - " + customerName + " & " + contactName + " & " + typeName);
             }
         }
         else if(event.getSource() == allCustomers)
@@ -149,6 +173,8 @@ public class Appointments_Controller implements Initializable
             {
                 // All appointments
                 apptsTable.setItems(DBAppointments.getAllAppointments());
+                updateApptCtr();
+                reportVariables.setText(" - All Appointments");
             }
             else if(!(allTime.isSelected()) && allContacts.isSelected() && allTypes.isSelected())
             {
@@ -157,12 +183,16 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified month
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonth(month));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified week
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeek(week));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week);
                 }
             }
             else if(allTime.isSelected() && !(allContacts.isSelected()) && allTypes.isSelected())
@@ -170,12 +200,16 @@ public class Appointments_Controller implements Initializable
                 // All appointments filtered by specified contact
                 String contactName = contactFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByContact(contactName));
+                updateApptCtr();
+                reportVariables.setText(" - " + contactName);
             }
             else if(allTime.isSelected() && allContacts.isSelected() && !(allTypes.isSelected()))
             {
                 // All appointments filtered by selected type
                 String typeName = typeFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByType(typeName));
+                updateApptCtr();
+                reportVariables.setText(" - " + typeName);
             }
             else if(allTime.isSelected() && !(allContacts.isSelected()) && !(allTypes.isSelected()))
             {
@@ -183,6 +217,8 @@ public class Appointments_Controller implements Initializable
                 String contactName = contactFilter.getValue().toString();
                 String typeName = typeFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByContactAndType(contactName, typeName));
+                updateApptCtr();
+                reportVariables.setText(" - " + contactName + " & " + typeName);
             }
             else if(!(allTime.isSelected()) && allContacts.isSelected() && !(allTypes.isSelected()))
             {
@@ -193,12 +229,16 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified by month and type
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndType(month, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + typeName);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified week and type
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndType(week, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + typeName);
                 }
             }
             else if(!(allTime.isSelected()) && !(allContacts.isSelected()) && allTypes.isSelected())
@@ -210,12 +250,16 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified month and contact
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndContact(month, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + contactName);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified week and contact
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndContact(week, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + contactName);
                 }
             }
             else if(!(allTime.isSelected()) && !(allContacts.isSelected()) && !(allTypes.isSelected()))
@@ -227,13 +271,17 @@ public class Appointments_Controller implements Initializable
                 {
                     // All appointments filtered by specified contact, month, and type
                     String month = monthFilter.getValue().toString();
-                    DBAppointments.filterApptsViewByMonthContactType(month, contactName, type);
+                    apptsTable.setItems(DBAppointments.filterApptsViewByMonthContactType(month, contactName, type));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + contactName + " & " + type);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified contact, week, and type
                     String week = weekFilter.getValue().toString();
-                    DBAppointments.filterApptsViewByWeekContactType(week, contactName, type);
+                    apptsTable.setItems(DBAppointments.filterApptsViewByWeekContactType(week, contactName, type));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + contactName + " & " + type);
                 }
             }
         }
@@ -247,6 +295,8 @@ public class Appointments_Controller implements Initializable
                 resetAllFilters();
                 contactFilter.getSelectionModel().clearSelection();
                 apptsTable.setItems(DBAppointments.getAllAppointments());
+                updateApptCtr();
+                reportVariables.setText(" - All Appointments");
             }
             else if(!(allTime.isSelected()) && allCustomers.isSelected() && allTypes.isSelected())
             {
@@ -255,12 +305,16 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified month
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonth(month));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified week
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeek(week));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week);
                 }
             }
             else if(allTime.isSelected() && !(allCustomers.isSelected()) && allTypes.isSelected())
@@ -268,12 +322,16 @@ public class Appointments_Controller implements Initializable
                 // All appointments filtered by specified customer
                 String customerName = customerFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByCustomer(customerName));
+                updateApptCtr();
+                reportVariables.setText(" - " + customerName);
             }
             else if(allTime.isSelected() && allCustomers.isSelected() && !(allTypes.isSelected()))
             {
                 // All appointments filtered by selected type
                 String typeName = typeFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByType(typeName));
+                updateApptCtr();
+                reportVariables.setText(" - " + typeName);
             }
             else if(allTime.isSelected() && !(allCustomers.isSelected()) && !(allTypes.isSelected()))
             {
@@ -281,6 +339,8 @@ public class Appointments_Controller implements Initializable
                 String customerName = typeFilter.getValue().toString();
                 String typeName = typeFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByCustomerAndType(customerName, typeName));
+                updateApptCtr();
+                reportVariables.setText(" - " + customerName + " & " + typeName);
             }
             else if(!(allTime.isSelected()) && allCustomers.isSelected() && !(allTypes.isSelected()))
             {
@@ -291,12 +351,16 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified month and type
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndType(month, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + typeName);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified week and type
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndType(week, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + typeName);
                 }
             }
             else if(!(allTime.isSelected()) && !(allCustomers.isSelected()) && allTypes.isSelected())
@@ -308,12 +372,16 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified customer and by specified month
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndCustomer(month, customerName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + customerName);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified customer and by specified week
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndCustomer(week, customerName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + customerName);
                 }
             }
             else if(!(allTime.isSelected()) && !(allCustomers.isSelected()) && !(allTypes.isSelected()))
@@ -326,12 +394,16 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified customer, month, and type
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerType(month, customerName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + customerName + " & " + typeName);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified customer, week, and type
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerType(week, customerName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + typeName);
                 }
             }
         }
@@ -344,6 +416,7 @@ public class Appointments_Controller implements Initializable
             {
                 resetAllFilters();
                 apptsTable.setItems(DBAppointments.getAllAppointments());
+                updateApptCtr();
             }
             else if(!(allTime.isSelected()) && allCustomers.isSelected() && allContacts.isSelected())
             {
@@ -352,12 +425,16 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified month
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonth(month));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified week
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeek(week));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week);
                 }
             }
             else if(allTime.isSelected() && !(allCustomers.isSelected()) && allContacts.isSelected())
@@ -365,12 +442,16 @@ public class Appointments_Controller implements Initializable
                 // All appointments filtered by specified customer
                 String customerName = customerFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByCustomer(customerName));
+                updateApptCtr();
+                reportVariables.setText(" - " + customerName);
             }
             else if(allTime.isSelected() && allCustomers.isSelected() && !(allContacts.isSelected()))
             {
                 // All appointments filtered by specified contact
                 String contactName = contactFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByContact(contactName));
+                updateApptCtr();
+                reportVariables.setText(" - " + contactName);
             }
             else if(allTime.isSelected() && !(allCustomers.isSelected()) && !(allContacts.isSelected()))
             {
@@ -378,22 +459,28 @@ public class Appointments_Controller implements Initializable
                 String customerName = customerFilter.getValue().toString();
                 String contactName = contactFilter.getValue().toString();
                 apptsTable.setItems(DBAppointments.filterApptsViewByCustomerAndContact(customerName, contactName));
+                updateApptCtr();
+                reportVariables.setText(" - " + customerName + " & " + contactName);
             }
             else if(!(allTime.isSelected()) && allCustomers.isSelected() && !(allContacts.isSelected()))
             {
-                String customerName = customerFilter.getValue().toString();
+                String contactName = contactFilter.getValue().toString();
 
                 if(monthFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified customer and by specified month
                     String month = monthFilter.getValue().toString();
-                    apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndCustomer(month, customerName));
+                    apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndCustomer(month, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + contactName);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified customer and by specified week
                     String week = weekFilter.getValue().toString();
-                    apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndCustomer(week, customerName));
+                    apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndCustomer(week, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + contactName);
                 }
             }
             else if(!(allTime.isSelected()) && !(allCustomers.isSelected()) && allContacts.isSelected())
@@ -405,31 +492,38 @@ public class Appointments_Controller implements Initializable
                     // All appointments filtered by specified customer and by specified month
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndCustomer(month, customerName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + customerName);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified customer and by specified week
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndCustomer(week, customerName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + customerName);
                 }
             }
             else if(!(allTime.isSelected()) && !(allCustomers.isSelected()) && !(allContacts.isSelected()))
             {
                 String customerName = customerFilter.getValue().toString();
                 String contactName = contactFilter.getValue().toString();
-                String typeName = typeFilter.getValue().toString();
 
                 if(monthFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified custome month, customer, and contact
                     String month = monthFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerContact(month, customerName, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + customerName + " & " + contactName);
                 }
                 else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                 {
                     // All appointments filtered by specified customer and by specified week
                     String week = weekFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerContact(week, customerName, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + contactName);
                 }
             }
         }
@@ -451,24 +545,32 @@ public class Appointments_Controller implements Initializable
                 {
                     // Filter all appointments by selected month
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonth(month));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month);
                 }
                 else if (!(allCustomers.isSelected()) && allContacts.isSelected() && allTypes.isSelected())
                 {
                     // Filter all appoints by selected month and customer
                     String customerName = customerFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndCustomer(month, customerName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + customerName);
                 }
                 else if(allCustomers.isSelected() && !(allContacts.isSelected()) && allTypes.isSelected())
                 {
                     // Filter all appointments by selected month and contact
                     String contactName = contactFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndContact(month, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + contactName);
                 }
                 else if(allCustomers.isSelected() && allContacts.isSelected() && !(allTypes.isSelected()))
                 {
                     // Filter all appointments by selected month and type
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndType(month, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + typeName);
                 }
                 else if(allCustomers.isSelected() && !(allContacts.isSelected()) && !(allTypes.isSelected()))
                 {
@@ -476,6 +578,8 @@ public class Appointments_Controller implements Initializable
                     String contactName = contactFilter.getValue().toString();
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthContactType(month, contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + contactName + " & " + typeName);
                 }
                 else if(!(allCustomers.isSelected()) && allContacts.isSelected() && !(allTypes.isSelected()))
                 {
@@ -483,6 +587,8 @@ public class Appointments_Controller implements Initializable
                     String customerName = customerFilter.getValue().toString();
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerType(month, customerName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + customerName + " & " + typeName);
                 }
                 else if(!(allCustomers.isSelected()) && !(allContacts.isSelected()) && allTypes.isSelected())
                 {
@@ -490,6 +596,8 @@ public class Appointments_Controller implements Initializable
                     String customerName = customerFilter.getValue().toString();
                     String contactName = contactFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerContact(month, customerName, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + customerName + " & " + contactName);
                 }
                 else if(!(allCustomers.isSelected()) && !(allContacts.isSelected()) && !(allTypes.isSelected()))
                 {
@@ -498,6 +606,8 @@ public class Appointments_Controller implements Initializable
                     String contactName = contactFilter.getValue().toString();
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerContactType(month, customerName, contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + month + " & " + customerName + " & " + contactName + " & " + typeName);
                 }
             }
             else if(event.getSource() == weekFilter)
@@ -510,24 +620,32 @@ public class Appointments_Controller implements Initializable
                 {
                     // Filter all appointments by selected week
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeek(week));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week);
                 }
                 else if (!(allCustomers.isSelected()) && allContacts.isSelected() && allTypes.isSelected())
                 {
                     // Filter all appointments by selected week and customer
                     String customerName = customerFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndCustomer(week, customerName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + customerName);
                 }
                 else if(allCustomers.isSelected() && !(allContacts.isSelected()) && allTypes.isSelected())
                 {
                     // Filter all appointments by selected week and contact
                     String contactName = contactFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndContact(week, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + contactName);
                 }
                 else if(allCustomers.isSelected() && allContacts.isSelected() && !(allTypes.isSelected()))
                 {
                     // Filter all appointments by selected week and type
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndType(week, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + typeName);
                 }
                 else if(allCustomers.isSelected() && !(allContacts.isSelected()) && !(allTypes.isSelected()))
                 {
@@ -535,6 +653,8 @@ public class Appointments_Controller implements Initializable
                     String contactName = contactFilter.getValue().toString();
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekContactType(week, contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + contactName + " & " + typeName);
                 }
                 else if(!(allCustomers.isSelected()) && allContacts.isSelected() && !(allTypes.isSelected()))
                 {
@@ -542,6 +662,8 @@ public class Appointments_Controller implements Initializable
                     String customerName = customerFilter.getValue().toString();
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerType(week, customerName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + typeName);
                 }
                 else if(!(allCustomers.isSelected()) && !(allContacts.isSelected()) && allTypes.isSelected())
                 {
@@ -549,6 +671,8 @@ public class Appointments_Controller implements Initializable
                     String customerName = customerFilter.getValue().toString();
                     String contactName = contactFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerContact(week, customerName, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + contactName);
                 }
                 else if(!(allCustomers.isSelected()) && !(allContacts.isSelected()) && !(allTypes.isSelected()))
                 {
@@ -557,6 +681,8 @@ public class Appointments_Controller implements Initializable
                     String contactName = contactFilter.getValue().toString();
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerContactType(week, customerName, contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + contactName + " & " + typeName);
                 }
             }
             else if(event.getSource() == customerFilter)
@@ -568,6 +694,8 @@ public class Appointments_Controller implements Initializable
                 {
                     // Filter all appointments by selected customer
                     apptsTable.setItems(DBAppointments.filterApptsViewByCustomer(customerName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + customerName);
                 }
                 else if(!(allTime.isSelected()) && allContacts.isSelected() && allTypes.isSelected())
                 {
@@ -576,12 +704,16 @@ public class Appointments_Controller implements Initializable
                         // All appointments filtered by specified month and customer
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndCustomer(month, customerName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + customerName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected week and customer
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndCustomer(week, customerName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + customerName);
                     }
                 }
                 else if(allTime.isSelected() && !(allContacts.isSelected()) && allTypes.isSelected())
@@ -589,12 +721,16 @@ public class Appointments_Controller implements Initializable
                     // Filter all appointments by selected customer and contact
                     String contactName = contactFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByCustomerAndContact(customerName, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + customerName + " & " + contactName);
                 }
                 else if(allTime.isSelected() && allContacts.isSelected() && !(allTypes.isSelected()))
                 {
                     // Filter all appointments by selected customer and type
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByCustomerAndType(customerName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + customerName + " & " + typeName);
                 }
                 else if(allTime.isSelected() && !(allContacts.isSelected()) && !(allTypes.isSelected()))
                 {
@@ -602,6 +738,8 @@ public class Appointments_Controller implements Initializable
                     String contactName = contactFilter.getValue().toString();
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByCustomerContactType(customerName, contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + customerName + " & " + contactName + " & " + typeName);
                 }
                 else if(!(allTime.isSelected()) && allContacts.isSelected() && !(allTypes.isSelected()))
                 {
@@ -612,12 +750,16 @@ public class Appointments_Controller implements Initializable
                         // Filter all appointments by selected month, customer, type
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerType(month, customerName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + customerName + " & " + typeName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected week, customer, type
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerType(week, customerName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + typeName);
                     }
                 }
                 else if(!(allTime.isSelected()) && !(allContacts.isSelected()) && allTypes.isSelected())
@@ -629,12 +771,16 @@ public class Appointments_Controller implements Initializable
                         // Filter all appointments by selected month, customer, contact
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerContact(month, customerName, contactName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + customerName + " & " + contactName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected week, customer, contact
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerContact(week, customerName, contactName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + contactName);
                     }
                 }
                 else if(!(allTime.isSelected()) && !(allContacts.isSelected()) && !(allTypes.isSelected()))
@@ -647,12 +793,16 @@ public class Appointments_Controller implements Initializable
                         // Filter all appointments by selected month, customer, contact, type
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerContactType(month, customerName, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + customerName + " & " + contactName + " & " + typeName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected week, customer, contact, type
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerContactType(week, customerName, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + contactName + " & " + typeName);
                     }
                 }
             }
@@ -665,6 +815,8 @@ public class Appointments_Controller implements Initializable
                 {
                     // Filter all appointments by selected contact
                     apptsTable.setItems(DBAppointments.filterApptsViewByContact(contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + contactName);
                 }
                 else if(!(allTime.isSelected()) && allCustomers.isSelected() && allTypes.isSelected())
                 {
@@ -673,12 +825,16 @@ public class Appointments_Controller implements Initializable
                         // Filter all appointments by selected month and contact
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndContact(month, contactName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + contactName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected week and contact
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndContact(week, contactName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + contactName);
                     }
                 }
                 else if(allTime.isSelected() && !(allCustomers.isSelected()) && allTypes.isSelected())
@@ -686,12 +842,16 @@ public class Appointments_Controller implements Initializable
                     // Filter all appointments by selected contact and customer
                     String customerName = customerFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByCustomerAndContact(customerName, contactName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + customerName + " & " + contactName);
                 }
                 else if(allTime.isSelected() && allCustomers.isSelected() && !(allTypes.isSelected()))
                 {
                     // Filter all appointments by selected contact and type
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByContactAndType(contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + contactName + " & " + typeName);
                 }
                 else if(allTime.isSelected() && !(allCustomers.isSelected()) && !(allTypes.isSelected()))
                 {
@@ -699,6 +859,8 @@ public class Appointments_Controller implements Initializable
                     String customerName = customerFilter.getValue().toString();
                     String typeName = typeFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByCustomerContactType(customerName, contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + customerName + " & " + contactName + " & " + typeName);
                 }
                 else if(!(allTime.isSelected()) && allCustomers.isSelected() && !(allTypes.isSelected()))
                 {
@@ -709,12 +871,16 @@ public class Appointments_Controller implements Initializable
                         // Filter all appointments by selected month, contact, type
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthContactType(month, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + contactName + " & " + typeName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected week, contact, type
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekContactType(week, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + contactName + " & " + typeName);
                     }
                 }
                 else if(!(allTime.isSelected()) && !(allCustomers.isSelected()) && allTypes.isSelected())
@@ -726,12 +892,16 @@ public class Appointments_Controller implements Initializable
                         // Filter all appointments by selected month, customer, contact
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerContact(month, customerName, contactName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + customerName + " & " + contactName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected week, customer, contact
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerContact(week, customerName, contactName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + contactName);
                     }
                 }
                 else if(!(allTime.isSelected()) && !(allCustomers.isSelected()) && !(allTypes.isSelected()))
@@ -744,12 +914,16 @@ public class Appointments_Controller implements Initializable
                         // Filter all appointments by selected month, customer, contact, type
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerContactType(month, customerName, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + customerName + " & " + contactName + " & " + typeName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected week, customer, contact, type
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerContactType(week, customerName, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + contactName + " & " + typeName);
                     }
                 }
             }
@@ -762,6 +936,8 @@ public class Appointments_Controller implements Initializable
                 {
                     // Filter all appointments by selected type
                     apptsTable.setItems(DBAppointments.filterApptsViewByType(typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + typeName);
                 }
                 else if(!(allTime.isSelected()) && allCustomers.isSelected() && allContacts.isSelected())
                 {
@@ -770,12 +946,16 @@ public class Appointments_Controller implements Initializable
                         // Filter all appointments by selected type and month
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthAndType(month, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + typeName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // Filter all appointments by selected type and week
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekAndType(week, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + typeName);
                     }
                 }
                 else if(allTime.isSelected() && !(allCustomers.isSelected()) && allContacts.isSelected())
@@ -783,12 +963,16 @@ public class Appointments_Controller implements Initializable
                     // Filter all appointments by selected type and customer
                     String customerName = customerFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByCustomerAndType(customerName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + customerName + " & " + typeName);
                 }
                 else if(allTime.isSelected() && allCustomers.isSelected() && !(allContacts.isSelected()))
                 {
                     // Filter all appointments by selected type and contact
                     String contactName = contactFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByContactAndType(contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + contactName + " & " + typeName);
                 }
                 else if(allTime.isSelected() && !(allCustomers.isSelected()) && !(allContacts.isSelected()))
                 {
@@ -796,6 +980,8 @@ public class Appointments_Controller implements Initializable
                     String contactName = contactFilter.getValue().toString();
                     String customerName = customerFilter.getValue().toString();
                     apptsTable.setItems(DBAppointments.filterApptsViewByCustomerContactType(customerName, contactName, typeName));
+                    updateApptCtr();
+                    reportVariables.setText(" - " + customerName + " & " + contactName + " & " + typeName);
                 }
                 else if(!(allTime.isSelected()) && allCustomers.isSelected() && !(allContacts.isSelected()))
                 {
@@ -805,13 +991,17 @@ public class Appointments_Controller implements Initializable
                     {
                         // All appointments filtered by specified contact, month, and type
                         String month = monthFilter.getValue().toString();
-                        DBAppointments.filterApptsViewByMonthContactType(month, contactName, typeName);
+                        apptsTable.setItems(DBAppointments.filterApptsViewByMonthContactType(month, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + contactName + " & " + typeName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // All appointments filtered by specified contact, week, and type
                         String week = weekFilter.getValue().toString();
-                        DBAppointments.filterApptsViewByWeekContactType(week, contactName, typeName);
+                        apptsTable.setItems(DBAppointments.filterApptsViewByWeekContactType(week, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + contactName + " & " + typeName);
                     }
                 }
                 else if(!(allTime.isSelected()) && !(allCustomers.isSelected()) && allContacts.isSelected())
@@ -822,13 +1012,17 @@ public class Appointments_Controller implements Initializable
                     {
                         // All appointments filtered by specified customer, month, and type
                         String month = monthFilter.getValue().toString();
-                        DBAppointments.filterApptsViewByMonthCustomerType(month, customerName, typeName);
+                        apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerType(month, customerName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + customerName + " & " + typeName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // All appointments filtered by specified customer, week, and type
                         String week = weekFilter.getValue().toString();
-                        DBAppointments.filterApptsViewByWeekCustomerType(week, customerName, typeName);
+                        apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerType(week, customerName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + typeName);
                     }
                 }
                 else if(!(allTime.isSelected()) && !(allCustomers.isSelected()) && !(allContacts.isSelected()))
@@ -841,12 +1035,16 @@ public class Appointments_Controller implements Initializable
                         // All appointments filtered by specified month, customer, contact, and type
                         String month = monthFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByMonthCustomerContactType(month, customerName, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - " + month + " & " + customerName + " & " + contactName + " & " + typeName);
                     }
                     else if(weekFilter.getSelectionModel().getSelectedItem() != null)
                     {
                         // All appointments filtered by specified week, customer, contact, and type
                         String week = weekFilter.getValue().toString();
                         apptsTable.setItems(DBAppointments.filterApptsViewByWeekCustomerContactType(week, customerName, contactName, typeName));
+                        updateApptCtr();
+                        reportVariables.setText(" - Week of " + week + " & " + customerName + " & " + contactName + " & " + typeName);
                     }
                 }
             }
@@ -1043,5 +1241,77 @@ public class Appointments_Controller implements Initializable
         allCustomers.setSelected(true);
         allContacts.setSelected(true);
         allTypes.setSelected(true);
+    }
+
+    public void updateApptCtr()
+    {
+        int apptCount = 0;
+
+        for(Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
+        {
+            apptCount++;
+        }
+
+        apptCtr.setText(Integer.toString(apptCount));
+        contactsRankedByApptCt();
+        divisionsRankedByCustomerCt();
+        typesRankedByApptType();
+        contactsRankedByApptTime();
+    }
+
+    public void contactsRankedByApptCt()
+    {
+        ObservableList<Appointment> apptsFilteredByContact = FXCollections.observableArrayList();
+
+        for (Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
+        {
+            apptsFilteredByContact.add(appt);
+        }
+
+        contactName.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+
+        contactsByApptCt.setItems(DBAppointments.rankContactsByApptCount(apptsFilteredByContact));
+    }
+
+    public void contactsRankedByApptTime()
+    {
+        ObservableList<Appointment> apptsFilteredByContact = FXCollections.observableArrayList();
+
+        for (Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
+        {
+            apptsFilteredByContact.add(appt);
+        }
+
+        contactApptTimeRanking.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+
+        contactsByApptTime.setItems(DBAppointments.rankContactsByApptTime(apptsFilteredByContact));
+    }
+
+    public void divisionsRankedByCustomerCt()
+    {
+        ObservableList<Appointment> apptsFilteredByContact = FXCollections.observableArrayList();
+
+        for (Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
+        {
+            apptsFilteredByContact.add(appt);
+        }
+
+        divisionRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+
+        divisionsByCustomerCt.setItems(DBAppointments.rankDivisionsByCustomerCount(apptsFilteredByContact));
+    }
+
+    public void typesRankedByApptType()
+    {
+        ObservableList<Appointment> apptsFilteredByContact = FXCollections.observableArrayList();
+
+        for (Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
+        {
+            apptsFilteredByContact.add(appt);
+        }
+
+        typeRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+
+        typesByApptCt.setItems(DBAppointments.rankTypesByApptCount(apptsFilteredByContact));
     }
 }

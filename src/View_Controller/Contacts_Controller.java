@@ -168,7 +168,7 @@ public class Contacts_Controller implements Initializable
         end.setCellValueFactory(new PropertyValueFactory<>("End"));
         assocCustomerID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
         userID.setCellValueFactory(new PropertyValueFactory<>("UserID"));
-        contactID.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
+        assocContactID.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
     }
 
     public void updateAssociatedApptsTable(MouseEvent event) throws IOException

@@ -20,11 +20,14 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Login_Controller implements Initializable
@@ -58,7 +61,7 @@ public class Login_Controller implements Initializable
         System.out.println(currentLocale.getDisplayLanguage());
     }
 
-    public void loginHandler(ActionEvent event) throws IOException
+    public void loginHandler(ActionEvent event) throws Exception
     {
         if(Credentials.validate(userName.getText().toString(), userPassword.getText().toString()))
         {
@@ -69,6 +72,9 @@ public class Login_Controller implements Initializable
 
             imminentApptCheck();
 
+            //Update log
+            updateLoginActivity(true);
+
             // redirect to Appts
             Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
             Scene scene = new Scene(addProduct);
@@ -78,6 +84,8 @@ public class Login_Controller implements Initializable
         }
         else
         {
+            updateLoginActivity(false);
+
             // popup warning
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Login");
@@ -147,6 +155,30 @@ public class Login_Controller implements Initializable
         }
 
         return imminentApptListing;
+    }
+
+    public void updateLoginActivity(Boolean bool) throws Exception
+    {
+        DateTimeFormatter localLoginTime = DateTimeFormatter.ofPattern("MM/yyyy/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
+        if(bool == true)
+        {
+            FileOutputStream log = new FileOutputStream("login_activity.txt", true);
+            log.write(("Successful Login: \r\n" + "User ID - " + DBUsers.getCurrentUserID() + ", User Name - " +
+                    DBUsers.getCurrentUser().getUserName() + "\r\n" + "Timestamp - " +
+                    localLoginTime.format(now) + "\r\n").getBytes());
+            log.close();
+        }
+        else
+        {
+            FileOutputStream log = new FileOutputStream("login_activity.txt", true);
+            log.write(("Failed Login: \r\n" + "User Name Entered - " +
+                    userName.getText() + "\r\n" + "Timestamp - " +
+                    localLoginTime.format(now) + "\r\n").getBytes());
+            log.close();
+        }
+
     }
 
 }
