@@ -11,18 +11,18 @@
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffc921" height="133.0" layoutX="212.0" layoutY="133.0" stroke="BLACK" strokeType="INSIDE" width="182.0" />
       <PasswordField fx:id="userPassword" layoutX="229.0" layoutY="224.0" onAction="#loginHandler" promptText="Password" text="53689194407" />
       <TextField fx:id="userName" layoutX="229.0" layoutY="164.0" promptText="User name" text="U081Ko" />
-      <Label layoutX="282.0" layoutY="109.0" text="LOGIN">
+      <Label fx:id="loginLabel" layoutX="213.0" layoutY="114.0" prefHeight="18.0" prefWidth="149.0" text="LOGIN" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Label>
-      <Label layoutX="61.0" layoutY="38.0" text="WGU APPOINTMENTS SYSTEM">
+      <Label fx:id="loginHeader" layoutX="61.0" layoutY="38.0" text="WGU APPOINTMENTS SYSTEM" textAlignment="CENTER">
          <font>
             <Font size="35.0" />
          </font>
       </Label>
-      <Label layoutX="229.0" layoutY="148.0" text="User Name" />
-      <Label layoutX="229.0" layoutY="208.0" text="Password" />
-      <Label fx:id="zoneID" alignment="CENTER" layoutX="142.0" layoutY="285.0" prefHeight="18.0" prefWidth="321.0" textAlignment="CENTER">
+      <Label fx:id="loginUserName" layoutX="229.0" layoutY="148.0" text="User Name" />
+      <Label fx:id="loginPassword" layoutX="229.0" layoutY="208.0" text="Password" />
+      <Label fx:id="zoneID" alignment="CENTER" layoutX="142.0" layoutY="268.0" prefHeight="51.0" prefWidth="321.0" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>

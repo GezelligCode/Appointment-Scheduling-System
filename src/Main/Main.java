@@ -1,4 +1,4 @@
-package View_Controller;
+package Main;
 
 import Database.DBConnection;
 import javafx.application.Application;
@@ -7,15 +7,17 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 
 public class Main extends Application
 {
-
-
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
+        ResourceBundle loginFrench = ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault());
+        Parent root = FXMLLoader.load(getClass().getResource("../View_Controller/Login.fxml"), loginFrench);
         primaryStage.setTitle("WGU Appointments System");
         primaryStage.setScene(new Scene(root, 600, 350));
         primaryStage.show();

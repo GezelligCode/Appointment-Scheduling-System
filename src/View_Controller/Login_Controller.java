@@ -21,7 +21,6 @@ import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -35,40 +34,40 @@ public class Login_Controller implements Initializable
     @FXML private TextField userName;
     @FXML private PasswordField userPassword;
     @FXML private Label zoneID;
+    @FXML private Label loginHeader;
+    @FXML private Label loginLabel;
+    @FXML private Label loginUserName;
+    @FXML private Label loginPassword;
 
     private static final TimeZone gmtTimeZone = TimeZone.getTimeZone("GMT+0");
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+        loginHeader.setText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("loginHeader"));
+        loginLabel.setText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("loginLabel"));
+        loginUserName.setText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("userName"));
+        loginPassword.setText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("passWord"));
         zoneID();
-        System.out.println("Get default locale: " + Locale.getDefault().toString());
     }
 
-    public Locale getLocale()
-    {
-        return Locale.getDefault();
-    }
 
     public void zoneID()
     {
         Locale currentLocale = Locale.getDefault();
 
         String zone = ZoneId.systemDefault().toString();
-        zoneID.setText("System Zone: " + zone);
-
-        // Check if appt is occurring within 15 minutes of time now. i.e., "appt's start <= time now".
-        System.out.println(currentLocale.getDisplayLanguage());
+        zoneID.setText(zone + "\n" + currentLocale.getDisplayLanguage());
     }
 
     public void loginHandler(ActionEvent event) throws Exception
     {
-        if(Credentials.validate(userName.getText().toString(), userPassword.getText().toString()))
+        if(Credentials.validate(userName.getText(), userPassword.getText()))
         {
-            System.out.println("Login Successful");
             DBConnection.startConnection();
             DBCountries.checkDateConversion();
-            DBUsers.loginUser(userName.getText().toString(), userPassword.getText().toString());
+            DBUsers.loginUser(userName.getText(), userPassword.getText());
 
             imminentApptCheck();
 
@@ -85,13 +84,24 @@ public class Login_Controller implements Initializable
         else
         {
             updateLoginActivity(false);
+            if(Locale.getDefault().getDisplayLanguage().equals("français"))
+            {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("alertTitle"));
+                alert.setHeaderText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("headerText"));
+                alert.setContentText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("contentText"));
+                alert.showAndWait();
+            }
+            else
+            {
+                // popup warning
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("alertTitle"));
+                alert.setHeaderText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("headerText"));
+                alert.setContentText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("contentText"));
+                alert.showAndWait();
+            }
 
-            // popup warning
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Login");
-            alert.setHeaderText("Login Failed");
-            alert.setContentText("Incorrect username or password.");
-            alert.showAndWait();
         }
     }
 
@@ -111,28 +121,41 @@ public class Login_Controller implements Initializable
         return utc.getTime();
     }
 
-    public void imminentApptCheck()
-    {
+    public void imminentApptCheck() {
         //Get time now in UTC
         SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         Timestamp utcTimestamp = Timestamp.valueOf(formatter.format(getUTCDateForLocalDate()));
 
         int numberOfAppts = DBAppointments.checkImminentAppointments();
-        String is_are = "are";
+        String is_are = "There are";
+        String is_are_fr = "Là sont";
         String appt_appts = "appointments";
-        if(!(numberOfAppts == 0 || numberOfAppts > 1))
-        {
-            is_are = "is";
+        String appt_appts_fr = "rendez-vous";
+
+        if (!(numberOfAppts == 0 || numberOfAppts > 1)) {
+            is_are = "There is";
+            is_are_fr = "Là est";
             appt_appts = "appointment";
         }
 
-        Alert alert = new Alert((Alert.AlertType.INFORMATION));
-        alert.setTitle("Appointments");
-        alert.setHeaderText("Upcoming Appointments");
-        alert.setContentText("There " + is_are + " " + numberOfAppts + " " + appt_appts + " in the next 15 minutes. \n" +
-                imminentAppointmentListing(DBAppointments.getImminentAppts()));
-        alert.showAndWait();
-
+        if (Locale.getDefault().getDisplayLanguage().equals("français"))
+        {
+            Alert alert = new Alert((Alert.AlertType.INFORMATION));
+            alert.setTitle(appt_appts_fr);
+            alert.setHeaderText("Rendez-vous à venir");
+            alert.setContentText(is_are_fr + " " + numberOfAppts + " " + appt_appts_fr + " "
+                    + "dans les 15 prochaines minutes." + "\n" + imminentAppointmentListing(DBAppointments.getImminentAppts()));
+            alert.showAndWait();
+        }
+        else
+        {
+            Alert alert = new Alert((Alert.AlertType.INFORMATION));
+            alert.setTitle("Appointments");
+            alert.setHeaderText("Upcoming Appointments");
+            alert.setContentText(is_are + " " + numberOfAppts + " " + appt_appts + " in the next 15 minutes. \n" +
+                    imminentAppointmentListing(DBAppointments.getImminentAppts()));
+            alert.showAndWait();
+        }
     }
 
     public String imminentAppointmentListing(ObservableList<Appointment> imminentAppts)
