@@ -103,30 +103,39 @@ public class Customers_Controller implements Initializable
 
         if(customer != null)
         {
-            if(DBCustomers.validateCustomerRemoval(customer))
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Customers");
+            confirm.setHeaderText("Confirm Customer Deletion");
+            confirm.setContentText("Are you sure you want to delete the following consultant?\n" + customer.getCustomerName());
+            confirm.showAndWait();
+
+            if(confirm.getResult() == ButtonType.OK)
             {
-                if(DBCustomers.removeCustomer(customer))
+                if(DBCustomers.validateCustomerRemoval(customer))
                 {
-                    updateCustomersTable();
-                    Alert alert = new Alert((Alert.AlertType.INFORMATION));
-                    alert.setTitle("Customers");
-                    alert.setHeaderText("Successful Deletion");
-                    alert.setContentText(customer.getCustomerName() + " is removed.");
-                    alert.showAndWait();
+                    if(DBCustomers.removeCustomer(customer))
+                    {
+                        updateCustomersTable();
+                        Alert alert = new Alert((Alert.AlertType.INFORMATION));
+                        alert.setTitle("Customers");
+                        alert.setHeaderText("Successful Deletion");
+                        alert.setContentText(customer.getCustomerName() + " is removed.");
+                        alert.showAndWait();
+                    }
+                    else
+                    {
+                        System.out.println("No customer by that ID found");
+                    }
                 }
                 else
                 {
-                    System.out.println("No customer by that ID found");
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Customers");
+                    alert.setHeaderText("Customer Has Associated Appointments");
+                    alert.setContentText("Please update or remove the associated appointment(s) for \n" + customer.getCustomerName() +
+                            " before removing " + customer.getCustomerName()+".");
+                    alert.showAndWait();
                 }
-            }
-            else
-            {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Customers");
-                alert.setHeaderText("Customer Has Associated Appointments");
-                alert.setContentText("Please remove the associated appointment(s) for \n" + customer.getCustomerName() +
-                        " before removing " + customer.getCustomerName()+".");
-                alert.showAndWait();
             }
         }
         else
@@ -134,7 +143,7 @@ public class Customers_Controller implements Initializable
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Customers");
             alert.setHeaderText("No Customer Selected");
-            alert.setContentText("Please select an customer to add");
+            alert.setContentText("Please select an customer to delete");
             alert.showAndWait();
         }
     }

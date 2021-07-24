@@ -1190,18 +1190,25 @@ public class Appointments_Controller implements Initializable
 
         if(appt != null)
         {
-            if(DBAppointments.removeAppt(appt))
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Appointments");
+            confirm.setHeaderText("Confirm Appointment Cancellation");
+            confirm.setContentText("Are you sure you want to delete the following appointment?\n"+
+                    "Appointment " + appt.getApptID() + ": " + appt.getTitle() + " - " + appt.getType());
+            confirm.showAndWait();
+
+            if(confirm.getResult() == ButtonType.OK)
             {
-                updateApptsTable();
-                Alert alert = new Alert((Alert.AlertType.INFORMATION));
-                alert.setTitle("Appointments");
-                alert.setHeaderText("Cancellation Complete");
-                alert.setContentText("Appointment " + appt.getApptID() + " - " + appt.getType() + " is cancelled.");
-                alert.showAndWait();
-            }
-            else
-            {
-                System.out.println("No appt by that ID found");
+                if(DBAppointments.removeAppt(appt))
+                {
+                    updateApptsTable();
+                    Alert alert = new Alert((Alert.AlertType.INFORMATION));
+                    alert.setTitle("Appointments");
+                    alert.setHeaderText("Cancellation Complete");
+                    alert.setContentText("Appointment " + appt.getApptID() + ": " + appt.getTitle() + " - " +
+                            appt.getType() + " is cancelled.");
+                    alert.showAndWait();
+                }
             }
         }
         else

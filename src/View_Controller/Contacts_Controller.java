@@ -85,9 +85,9 @@ public class Contacts_Controller implements Initializable
         else
         {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Contacts");
-            alert.setHeaderText("No Contact Selected");
-            alert.setContentText("Please select a contact to modify");
+            alert.setTitle("Consultants");
+            alert.setHeaderText("No Consultants Selected");
+            alert.setContentText("Please select a consultant to modify");
             alert.showAndWait();
         }
     }
@@ -98,38 +98,47 @@ public class Contacts_Controller implements Initializable
 
         if(contact != null)
         {
-            if(DBContacts.validateContactRemoval(contact))
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Consultants");
+            confirm.setHeaderText("Confirm Consultant Deletion");
+            confirm.setContentText("Are you sure you want to delete the following consultant?\n" + contact.getContactName());
+            confirm.showAndWait();
+
+            if(confirm.getResult() == ButtonType.OK)
             {
-                if(DBContacts.removeContact(contact))
+                if(DBContacts.validateContactRemoval(contact))
                 {
-                    updateContactsTable();
-                    Alert alert = new Alert((Alert.AlertType.INFORMATION));
-                    alert.setTitle("Contacts");
-                    alert.setHeaderText("Successful Deletion");
-                    alert.setContentText(contact.getContactName() + " is removed.");
-                    alert.showAndWait();
+                    if(DBContacts.removeContact(contact))
+                    {
+                        updateContactsTable();
+                        Alert alert = new Alert((Alert.AlertType.INFORMATION));
+                        alert.setTitle("Consultants");
+                        alert.setHeaderText("Successful Deletion");
+                        alert.setContentText(contact.getContactName() + " is removed.");
+                        alert.showAndWait();
+                    }
+                    else
+                    {
+                        System.out.println("No contact by that ID found");
+                    }
                 }
                 else
                 {
-                    System.out.println("No contact by that ID found");
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Consultants");
+                    alert.setHeaderText("Consultants Has Associated Appointments");
+                    alert.setContentText("Please update or cancel the associated appointment(s) for \n" + contact.getContactName() +
+                            " before removing " + contact.getContactName()+".");
+                    alert.showAndWait();
                 }
-            }
-            else
-            {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Contacts");
-                alert.setHeaderText("Contact Has Associated Appointments");
-                alert.setContentText("Please remove the associated appointment(s) for \n" + contact.getContactName() +
-                        " before removing " + contact.getContactName()+".");
-                alert.showAndWait();
             }
         }
         else
         {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Contacts");
-            alert.setHeaderText("No Contact Selected");
-            alert.setContentText("Please select a contact to add");
+            alert.setTitle("Consultants");
+            alert.setHeaderText("No Consultant Selected");
+            alert.setContentText("Please select a consultant to add");
             alert.showAndWait();
         }
     }
