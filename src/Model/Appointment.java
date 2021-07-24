@@ -1,8 +1,13 @@
 package Model;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
 
 public class Appointment
 {
@@ -148,6 +153,75 @@ public class Appointment
     public Time getApptTime()
     {
         return this.time;
+    }
+
+    public static boolean validateAppt(ComboBox customer, TextField title, TextField description, TextField location,
+                                TextField type, ComboBox contact, Timestamp start, Timestamp end)
+    {
+        String errors = "";
+
+        if (customer.getValue() == null)
+        {
+            errors = errors + " A customer selection is required.\n";
+        }
+        if (title.getText().isEmpty())
+        {
+            errors = errors + " An entry for Title is required.\n";
+        }
+        if(title.getText().length() > 50)
+        {
+            errors = errors + " The entry for Title cannot exceed 50 characters.\n";
+        }
+        if (description.getText().isEmpty())
+        {
+            errors = errors + " An entry for Description is required.\n";
+        }
+        if(description.getText().length() > 50)
+        {
+            errors = errors + " The entry for Description cannot exceed 50 characters.\n";
+        }
+        if (location.getText().isEmpty())
+        {
+            errors = errors + " An entry for Location is required.\n";
+        }
+        if(location.getText().length() > 50)
+        {
+            errors = errors + " The entry for Location cannot exceed 50 characters.\n";
+        }
+        if (type.getText().isEmpty())
+        {
+            errors = errors + " An entry for Type is required.\n";
+        }
+        if(type.getText().length() > 50)
+        {
+            errors = errors + " The entry for Type cannot exceed 50 characters.\n";
+        }
+        if (contact.getValue() == null)
+        {
+            errors = errors + " A Contact selection is required.\n";
+        }
+        if(end.before(start) || start.equals(end))
+        {
+            errors = errors + " The appointment end time must be after the start time.\n";
+        }
+        if(end.before(Timestamp.from(Instant.now())) || start.before(Timestamp.from(Instant.now())))
+        {
+            errors = errors + " The appointment time must be set in the future.\n";
+        }
+
+        if(errors.isEmpty())
+        {
+            return true;
+        }
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Appointments");
+            alert.setHeaderText("Please check the form for the following error(s):");
+            alert.setContentText(errors);
+            alert.showAndWait();
+            return false;
+        }
     }
 
 }

@@ -97,44 +97,68 @@ public class ModifyAppointments_Controller implements Initializable
 
     public void saveHandler(ActionEvent event) throws IOException, ParseException
     {
-        int apptID = appt.getApptID();
-        String title = apptTitle.getText();
-        String description = apptDescription.getText();
-        String location = apptLocation.getText();
-        String type = apptType.getText();
-        Timestamp start = startTimeStamper();
-        Timestamp end = endTimeStamper();
-        //ToDo find a better way to get the customer ID than by referring to name; there can be duplicative name values
-        // in any real-world data set, but the IDs will be unique.
-        int customerID = DBCustomers.getCustomerIDByName(apptCustomerName.getValue().toString());
-        int userID = DBUsers.getCurrentUserID();
-        //ToDo same as ToDo above; need better way to get ID than by name.
-        int contactID = DBContacts.getContactIDByName(apptContactName.getValue().toString());
-
-
-        Appointment modifiedAppt = new Appointment(apptID, title, description, location, type, start, end, customerID,
-                userID, contactID);
-
-        if(DBAppointments.validateBusinessHours(modifiedAppt))
+        try
         {
-            if(DBAppointments.validateApptOverlap(modifiedAppt))
+            if(Appointment.validateAppt(apptCustomerName, apptTitle, apptDescription, apptLocation, apptType,
+                    apptContactName, startTimeStamper(), endTimeStamper()))
             {
-                if(DBAppointments.updateAppt(modifiedAppt))
+                int apptID = appt.getApptID();
+                String title = apptTitle.getText();
+                String description = apptDescription.getText();
+                String location = apptLocation.getText();
+                String type = apptType.getText();
+                Timestamp start = startTimeStamper();
+                Timestamp end = endTimeStamper();
+                //ToDo find a better way to get the customer ID than by referring to name; there can be duplicative name values
+                // in any real-world data set, but the IDs will be unique.
+                int customerID = DBCustomers.getCustomerIDByName(apptCustomerName.getValue().toString());
+                int userID = DBUsers.getCurrentUserID();
+                //ToDo same as ToDo above; need better way to get ID than by name.
+                int contactID = DBContacts.getContactIDByName(apptContactName.getValue().toString());
+
+
+                Appointment modifiedAppt = new Appointment(apptID, title, description, location, type, start, end, customerID,
+                        userID, contactID);
+
+                if(DBAppointments.validateBusinessHours(modifiedAppt))
                 {
-                    System.out.println("Appointment updated successfully");
-                    // Switch to Appts Scene
-                    Parent Appointments = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
-                    Scene scene = new Scene(Appointments);
-                    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    window.setScene(scene);
-                    window.show();
-                }
-                else
-                {
-                    System.out.println("Check form for errors");
+                    if(DBAppointments.validateApptOverlap(modifiedAppt))
+                    {
+                        if(DBAppointments.updateAppt(modifiedAppt))
+                        {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Appointments");
+                            alert.setHeaderText("Appointment Creation Successful");
+                            alert.setContentText("Appointment " + appt.getApptID() + " - " + appt.getTitle() + " - " +
+                                    appt.getType() + " succesfully added.");
+                            alert.showAndWait();
+
+                            // Switch to Appts Scene
+                            Parent Appointments = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
+                            Scene scene = new Scene(Appointments);
+                            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                            window.setScene(scene);
+                            window.show();
+                        }
+                        else
+                        {
+                            System.out.println("Check form for errors");
+                        }
+                    }
                 }
             }
         }
+        catch(NullPointerException npe)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Appointments");
+            alert.setHeaderText("Appointment Time is Incomplete");
+            alert.setContentText("Please enter all date, hour, minute, and AM/PM fields for the\n" +
+                    "Start and End times.");
+            alert.showAndWait();
+        }
+
+
     }
 
     public void cancelHandler(ActionEvent event) throws IOException

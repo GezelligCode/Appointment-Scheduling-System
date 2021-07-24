@@ -20,6 +20,7 @@ import javafx.util.converter.LocalDateTimeStringConverter;
 import javafx.util.converter.LocalTimeStringConverter;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -84,36 +85,52 @@ public class AddAppointments_Controller implements Initializable
         apptContactEmail.setText(DBContacts.getContactEmailByID(DBContacts.getContactIDByName(contactName)));
     }
 
-    public void saveHandler(ActionEvent event) throws IOException, ParseException
+    public void saveHandler(ActionEvent event) throws IOException, ParseException, InvocationTargetException
     {
-        int ApptID = 0;
-        String customer = apptCustomerName.getValue().toString();
-        String title = apptTitle.getText();
-        String description = apptDescription.getText();
-        String location = apptLocation.getText();
-        String type = apptType.getText();
-        Timestamp start = startTimeStamper();
-        Timestamp end = endTimeStamper();
-        String contactName = apptContactName.getValue().toString();
-
-        int contactID = DBContacts.getContactIDByName(contactName);
-        int customerID = DBCustomers.getCustomerIDByName(customer);
-        int userID = DBUsers.getCurrentUserID();
-
-        Appointment appt = new Appointment(ApptID, title, description, location, type, start, end, customerID, userID, contactID);
-
-        if(DBAppointments.validateBusinessHours(appt))
+        try
         {
-            if(DBAppointments.validateApptOverlap(appt))
+            if(Appointment.validateAppt(apptCustomerName, apptTitle, apptDescription, apptLocation, apptType,
+                    apptContactName, startTimeStamper(), endTimeStamper()))
             {
-                DBAppointments.addAppointment(appt, start, end);
-                // Switch to Appts Scene
-                Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
-                Scene scene = new Scene(addProduct);
-                Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                window.setScene(scene);
-                window.show();
+                int ApptID = 0;
+                String customer = apptCustomerName.getValue().toString();
+                String title = apptTitle.getText();
+                String description = apptDescription.getText();
+                String location = apptLocation.getText();
+                String type = apptType.getText();
+                Timestamp start = startTimeStamper();
+                Timestamp end = endTimeStamper();
+                String contactName = apptContactName.getValue().toString();
+
+                int contactID = DBContacts.getContactIDByName(contactName);
+                int customerID = DBCustomers.getCustomerIDByName(customer);
+                int userID = DBUsers.getCurrentUserID();
+
+                Appointment appt = new Appointment(ApptID, title, description, location, type, start, end, customerID, userID, contactID);
+
+                if(DBAppointments.validateBusinessHours(appt))
+                {
+                    if(DBAppointments.validateApptOverlap(appt))
+                    {
+                        DBAppointments.addAppointment(appt, start, end);
+                        // Switch to Appts Scene
+                        Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
+                        Scene scene = new Scene(addProduct);
+                        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        window.setScene(scene);
+                        window.show();
+                    }
+                }
             }
+        }
+        catch (NullPointerException npe)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Appointments");
+            alert.setHeaderText("Appointment Time is Incomplete");
+            alert.setContentText("Please enter all date, hour, minute, and AM/PM fields for the\n" +
+                            "Start and End times.");
+            alert.showAndWait();
         }
     }
 
