@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -32,7 +33,6 @@ public class ModifyContacts_Controller implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         contactID.setDisable(true);
-
         setFields();
     }
 
@@ -42,24 +42,26 @@ public class ModifyContacts_Controller implements Initializable
         String name = contactName.getText();
         String email = contactEmail.getText();
 
-        Contact modifiedContact = new Contact(ID, name, email);
-
-        if(DBContacts.updateContact(modifiedContact))
+        if(Contact.validateContact(name, email))
         {
-            System.out.println("Contact updated successfully");
+            Contact modifiedContact = new Contact(ID, name, email);
 
-            // Switch to Contacts Scene
-            Parent Contacts = FXMLLoader.load(getClass().getResource("Contacts.fxml"));
-            Scene scene = new Scene(Contacts);
-            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            window.setScene(scene);
-            window.show();
-        }
-        else
-        {
-            System.out.println("Check form for errors");
-        }
+            if(DBContacts.updateContact(modifiedContact))
+            {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Consultants");
+                alert.setHeaderText("Consultant Modification Successful");
+                alert.setContentText("Consultant " + modifiedContact.getContactName() + " succesfully updated.");
+                alert.showAndWait();
 
+                // Switch to Contacts Scene
+                Parent Contacts = FXMLLoader.load(getClass().getResource("Contacts.fxml"));
+                Scene scene = new Scene(Contacts);
+                Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                window.setScene(scene);
+                window.show();
+            }
+        }
     }
 
     public void cancelHandler(ActionEvent event) throws IOException

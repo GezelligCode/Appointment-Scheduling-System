@@ -140,10 +140,6 @@ public class ModifyAppointments_Controller implements Initializable
                             window.setScene(scene);
                             window.show();
                         }
-                        else
-                        {
-                            System.out.println("Check form for errors");
-                        }
                     }
                 }
             }

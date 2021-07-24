@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -44,22 +45,28 @@ public class AddContacts_Controller implements Initializable
         String name = contactName.getText();
         String email = contactEmail.getText();
 
-        //Use the DBCustomers class to interface with the DB, in this case to add the customer
-        // First create a customer instance
-        Contact addedContact = new Contact(name, email);
+        if(Contact.validateContact(name, email))
+        {
+            //Use the DBCustomers class to interface with the DB, in this case to add the customer
+            // First create a customer instance
+            Contact addedContact = new Contact(name, email);
 
-        //DBCustomers Method
-        DBContacts.addContact(addedContact);
+            //DBCustomers Method
+            DBContacts.addContact(addedContact);
 
-        // Will need error handling
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Consultants");
+            alert.setHeaderText("Consultant Creation Successful");
+            alert.setContentText("Consultant " + addedContact.getContactName() + " succesfully added.");
+            alert.showAndWait();
 
-        // Return to Contacts screen
-        Parent contacts = FXMLLoader.load(getClass().getResource("Contacts.fxml"));
-        Scene scene = new Scene(contacts);
-        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        window.setScene(scene);
-        window.show();
-
+            // Return to Contacts screen
+            Parent contacts = FXMLLoader.load(getClass().getResource("Contacts.fxml"));
+            Scene scene = new Scene(contacts);
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            window.setScene(scene);
+            window.show();
+        }
     }
 
     public void cancelHandler(ActionEvent event) throws IOException

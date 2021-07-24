@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -45,6 +46,14 @@ public class ModifyCustomers_Controller implements Initializable
         customerID.setDisable(true);
         customerCountry.setItems(countryList());
         customerDivision.setItems(divisionList());
+        if(customerDivision.getItems().isEmpty())
+        {
+            customerDivision.setDisable(true);
+        }
+        else
+        {
+            customerDivision.setDisable(false);
+        }
 
         setFields();
     }
@@ -54,6 +63,14 @@ public class ModifyCustomers_Controller implements Initializable
         String countrySelected = customerCountry.getValue().toString();
 
         customerDivision.setItems(divisionsFilteredByCountry(countrySelected));
+        if(customerDivision.getItems().isEmpty())
+        {
+            customerDivision.setDisable(true);
+        }
+        else
+        {
+            customerDivision.setDisable(false);
+        }
     }
 
     public ObservableList countryList()
@@ -94,31 +111,67 @@ public class ModifyCustomers_Controller implements Initializable
 
     public void saveHandler(ActionEvent event) throws IOException
     {
-        int ID = selectedCustomer.getCustomerID();
-        String name = customerName.getText();
-        String address = customerAddress.getText();
-        String postalCode = customerPostalCode.getText();
-        String phone = customerPhone.getText();
-        int divisionID = DBDivisions.getDivisionIDByName(customerDivision.getValue().toString());
-
-        Customer modifiedCustomer = new Customer(ID, name, address, postalCode, phone, divisionID, DBUsers.getCurrentUser());
-
-        if(DBCustomers.updateCustomer(modifiedCustomer))
+        try
         {
-            System.out.println("Customer updated successfully");
+            if(Customer.validateCustomer(customerName.getText(), customerAddress.getText(), customerPostalCode.getText().toString(),
+                    customerPhone.getText()))
+            {
+                int ID = selectedCustomer.getCustomerID();
+                String name = customerName.getText();
+                String address = customerAddress.getText();
+                String postalCode = customerPostalCode.getText();
+                String phone = customerPhone.getText();
+                int divisionID = DBDivisions.getDivisionIDByName(customerDivision.getValue().toString());
 
-            // Switch to Customers Scene
-            Parent Customers = FXMLLoader.load(getClass().getResource("Customers.fxml"));
-            Scene scene = new Scene(Customers);
-            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            window.setScene(scene);
-            window.show();
+                Customer modifiedCustomer = new Customer(ID, name, address, postalCode, phone, divisionID, DBUsers.getCurrentUser());
+
+                if(DBCustomers.updateCustomer(modifiedCustomer))
+                {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Customers");
+                    alert.setHeaderText("Customer Modification Successful");
+                    alert.setContentText("Consultant " + modifiedCustomer.getCustomerName() + " succesfully updated.");
+                    alert.showAndWait();
+
+                    // Switch to Customers Scene
+                    Parent Customers = FXMLLoader.load(getClass().getResource("Customers.fxml"));
+                    Scene scene = new Scene(Customers);
+                    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    window.setScene(scene);
+                    window.show();
+                }
+            }
         }
-        else
+        catch(NullPointerException npe)
         {
-            System.out.println("Check form for errors");
+            if(customerCountry.getValue() == null)
+            {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Customers");
+                alert.setHeaderText("Country Selection is Required");
+                alert.setContentText("Please select a country.\nNote that our main offices "+
+                        "are in the following locations:\nPhoenix, Arizona\nWhite Plains, New York\nMontreal, Canada\nLondon, England");
+                alert.showAndWait();
+            }
+            else if(!customerDivision.getItems().isEmpty() && customerCountry.getValue() != null)
+            {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Customers");
+                alert.setHeaderText("Division Selection is Required");
+                alert.setContentText("Please select a division.\nNote that our main offices "+
+                        "are in the following locations:\nPhoenix, Arizona\nWhite Plains, New York\nMontreal, Canada\nLondon, England");
+                alert.showAndWait();
+            }
+            else if(customerDivision.getItems().isEmpty())
+            {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Customers");
+                alert.setHeaderText("Valid Country Selection is Required");
+                alert.setContentText("Please select a valid country.\nNote that our main offices "+
+                        "are in the following locations:\nPhoenix, Arizona\nWhite Plains, New York\nMontreal, Canada\nLondon, England");
+                alert.showAndWait();
+            }
         }
-
     }
 
     public void cancelHandler(ActionEvent event) throws IOException

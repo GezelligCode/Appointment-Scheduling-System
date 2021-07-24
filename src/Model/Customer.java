@@ -1,6 +1,10 @@
 package Model;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+
 import java.sql.Timestamp;
+import java.util.regex.Pattern;
 
 public class Customer
 {
@@ -20,17 +24,10 @@ public class Customer
     public Customer(String customerName, String customerAddress, String customerPostalCode, String customerPhone,
                     int customerDivisionID, User user)
     {
-        //int userID = customerCreator.getUserID();
-
-        //this.customerID = customerID;
         this.customerName = customerName;
         this.customerAddress = customerAddress;
         this.customerPostalCode = customerPostalCode;
         this.customerPhone = customerPhone;
-        //this.customerCreateDate = customerCreateDate;
-        //this.customerCreator = customerCreator; // this may need to be a custom String instead
-        //this.customerModifyDate = customerModifyDate;
-        //this.customerModifier = customerModifier;
         this.customerDivisionID = customerDivisionID;
         this.customerCreator = user.getUserName();
     }
@@ -44,31 +41,33 @@ public class Customer
         this.customerAddress = customerAddress;
         this.customerPostalCode = customerPostalCode;
         this.customerPhone = customerPhone;
-        //this.customerCreateDate = customerCreateDate;
-        //this.customerCreator = customerCreator; // this may need to be a custom String instead
-        //this.customerModifyDate = customerModifyDate;
         this.customerModifier = user.getUserName();
         this.customerDivisionID = customerDivisionID;
-        //this.customerCreator = user.getUserName();
+    }
+
+    // Constructor for modifying a customer from a country without a division
+    public Customer(int customerID, String customerName, String customerAddress, String customerPostalCode,
+                    String customerPhone, User user)
+    {
+        this.customerID = customerID;
+        this.customerName = customerName;
+        this.customerAddress = customerAddress;
+        this.customerPostalCode = customerPostalCode;
+        this.customerPhone = customerPhone;
+        this.customerModifier = user.getUserName();
     }
 
     // Constructor for getting all customers from DB
     public Customer(int customerID, String customerName, String customerAddress, String customerPostalCode, String customerPhone,
                     String customerCreator, String customerDivisionName)
     {
-        //int userID = customerCreator.getUserID();
         this.customerID = customerID;
         this.customerName = customerName;
         this.customerAddress = customerAddress;
         this.customerPostalCode = customerPostalCode;
         this.customerPhone = customerPhone;
-        //this.customerCreateDate = customerCreateDate;
-        this.customerCreator = customerCreator; // this may need to be a custom String instead
-        //this.customerModifyDate = customerModifyDate;
-        //this.customerModifier = customerModifier;
-        //this.customerDivisionID = customerDivisionID;
+        this.customerCreator = customerCreator;
         this.customerDivisionName = customerDivisionName;
-        //this.customerCreator = user.getUserName();
     }
 
     // Constructor for modifying customers
@@ -186,5 +185,59 @@ public class Customer
     public String getCustomerDivisionName() { return customerDivisionName; }
 
     public void setCustomerDivisionName(String customerDivisionName) { this.customerDivisionName = customerDivisionName; }
+
+    public static boolean validateCustomer(String name, String address, String postalCode, String phone)
+    {
+        String errors = "";
+
+
+        if(name.isEmpty() || name.isBlank())
+        {
+            errors = errors + " An entry for Name is required.\n";
+        }
+        if(name.length() > 50)
+        {
+            errors = errors + " The entry for Name cannot exceed 50 characters.\n";
+        }
+        if(address.isEmpty() || address.isBlank())
+        {
+            errors = errors + " An entry for Address is required.\n";
+        }
+        if(address.length() > 100)
+        {
+            errors = errors + " The entry for Name cannot exceed 100 characters.\n";
+        }
+        if(postalCode.isEmpty() || postalCode.isBlank())
+        {
+            errors = errors + " An entry for Postal Code is required.\n";
+        }
+        if(postalCode.length() > 50)
+        {
+            errors = errors + " The entry for Postal Code cannot exceed 50 characters.\n";
+        }
+        if(phone.isEmpty() || phone.isBlank())
+        {
+            errors = errors + " An entry for Phone is required.\n";
+        }
+        if(phone.length() > 50)
+        {
+            errors = errors + " The entry for Phone cannot exceed 50 characters.\n";
+        }
+
+        if(errors.isEmpty())
+        {
+            return true;
+        }
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Customers");
+            alert.setHeaderText("Please check the form for the following error(s):");
+            alert.setContentText(errors);
+            alert.showAndWait();
+
+            return false;
+        }
+    }
 
 }
