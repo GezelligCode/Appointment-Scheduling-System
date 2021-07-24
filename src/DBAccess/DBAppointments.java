@@ -1532,51 +1532,56 @@ public class DBAppointments
     {
         String overlappingAppts = new String();
 
+        boolean apptsOverlap = false;
+
+
         for(Appointment a : DBAppointments.getAllAppointments())
         {
+            apptsOverlap =
+                    (appt.getStart().after(a.getStart()) || appt.getStart().equals(a.getStart())) &&
+                            (appt.getStart().before(a.getEnd()) || appt.getStart().equals(a.getEnd())) ||
+                            (appt.getEnd().before(a.getEnd()) || appt.getEnd().equals(a.getEnd())) &&
+                                    (appt.getEnd().after(a.getStart()) || appt.getEnd().equals(a.getStart())) ||
+                            (a.getStart().after(appt.getStart()) && a.getEnd().before(appt.getEnd()));
+
             if(a.getApptID() != appt.getApptID())
             {
                 // If selected appt starts within another appt
-                if((appt.getStart().after(a.getStart()) || appt.getStart().equals(a.getStart())) &&
-                        (appt.getStart().before(a.getEnd()) || appt.getStart().equals(a.getEnd())))
+                if(apptsOverlap)
                 {
-                    if(overlappingAppts.isEmpty())
+                    if(appt.getContactID() == a.getContactID() && appt.getCustomerID() == a.getCustomerID())
                     {
-                        overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
-                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
+                        if(overlappingAppts.isEmpty())
+                        {
+                            overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                    a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
+                            "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".";
+                        }
+                        else
+                        {
+                            overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                    a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
+                                    "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".";
+                        }
                     }
-                    else
+                    else if(appt.getContactID() == a.getContactID())
                     {
-                        overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
-                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
-                    }
-                }
-                // If selected appt ends within another appt
-                else if((appt.getEnd().before(a.getEnd()) || appt.getEnd().equals(a.getEnd())) &&
-                        (appt.getEnd().after(a.getStart()) || appt.getEnd().equals(a.getStart())))
-                {
-                    if(overlappingAppts.isEmpty())
-                    {
-                        overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
-                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
-                    }
-                    else
-                    {
-                        overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
-                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
-                    }
-                }
-                else if(a.getStart().after(appt.getStart()) && a.getEnd().before(appt.getEnd()))
-                {
-                    if(overlappingAppts.isEmpty())
-                    {
-                        overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
-                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
-                    }
-                    else
-                    {
-                        overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
-                                a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n";
+                        if(overlappingAppts.isEmpty())
+                        {
+                            overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                    a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
+                                    "Choose a different appointment time for " + DBContacts.getContactNameByID(a.getContactID()) + ".\n"+
+                            "Alternatively, you may select a different consultant for this appointment with \n" +
+                            DBCustomers.getCustomerNameByID(appt.getCustomerID())+".";
+                        }
+                        else
+                        {
+                            overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                    a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
+                                    "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".\n"+
+                                    "Alternatively, you may select a different consultant for this appointment with \n" +
+                                    DBCustomers.getCustomerNameByID(appt.getCustomerID())+".";
+                        }
                     }
                 }
                 else

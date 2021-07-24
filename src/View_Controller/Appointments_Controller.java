@@ -1239,6 +1239,7 @@ public class Appointments_Controller implements Initializable
     private void updateApptsTable()
     {
         apptsTable.setItems(DBAppointments.getAllAppointments());
+        updateApptCtr();
     }
 
 
@@ -1278,6 +1279,7 @@ public class Appointments_Controller implements Initializable
         contactName.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
         contactsByApptCt.setItems(DBAppointments.rankContactsByApptCount(apptsFilteredByContact));
+        contactsByApptCt.refresh();
     }
 
     public void contactsRankedByApptTime()
@@ -1292,6 +1294,7 @@ public class Appointments_Controller implements Initializable
         contactApptTimeRanking.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
         contactsByApptTime.setItems(DBAppointments.rankContactsByApptTime(apptsFilteredByContact));
+        contactsByApptTime.refresh();
     }
 
     public void divisionsRankedByCustomerCt()
@@ -1306,6 +1309,7 @@ public class Appointments_Controller implements Initializable
         divisionRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
         divisionsByCustomerCt.setItems(DBAppointments.rankDivisionsByCustomerCount(apptsFilteredByContact));
+        divisionsByCustomerCt.refresh();
     }
 
     public void typesRankedByApptType()
@@ -1320,5 +1324,6 @@ public class Appointments_Controller implements Initializable
         typeRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
         typesByApptCt.setItems(DBAppointments.rankTypesByApptCount(apptsFilteredByContact));
+        typesByApptCt.refresh();
     }
 }

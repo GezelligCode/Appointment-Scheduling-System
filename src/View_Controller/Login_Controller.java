@@ -52,7 +52,6 @@ public class Login_Controller implements Initializable
         zoneID();
     }
 
-
     public void zoneID()
     {
         Locale currentLocale = Locale.getDefault();
@@ -101,10 +100,8 @@ public class Login_Controller implements Initializable
                 alert.setContentText(ResourceBundle.getBundle("Main/LoginLanguageBundle", Locale.getDefault()).getString("contentText"));
                 alert.showAndWait();
             }
-
         }
     }
-
 
     public static Date getUTCDateForLocalDate()
     {
@@ -127,24 +124,46 @@ public class Login_Controller implements Initializable
         Timestamp utcTimestamp = Timestamp.valueOf(formatter.format(getUTCDateForLocalDate()));
 
         int numberOfAppts = DBAppointments.checkImminentAppointments();
-        String is_are = "There are";
-        String is_are_fr = "Là sont";
-        String appt_appts = "appointments";
+
+        interface pluralSingular
+        {
+            String runCheck(String str);
+        }
+
+        pluralSingular plural_en = (s) -> s + " are";
+        pluralSingular singular_en = (s) -> s + " is";
+        pluralSingular pluralAppts_en = (s) -> s + " appointments in the next 15 minutes";
+        pluralSingular pluralAppts_fr = (s) -> s + " rendez-vous dans les 15 prochaines minutes.";
+        pluralSingular singularAppt_en = (s) -> s + " appointment in the next 15 minutes";
+        pluralSingular plural_fr = (s) -> s + " Là sont";
+        pluralSingular singular_fr = (s) -> s + " Là est";
+
+        String is_are;
+        String is_are_fr;
+        String appt_appts;
         String appt_appts_fr = "rendez-vous";
 
-        if (!(numberOfAppts == 0 || numberOfAppts > 1)) {
-            is_are = "There is";
-            is_are_fr = "Là est";
-            appt_appts = "appointment";
+        if (numberOfAppts == 0 || numberOfAppts > 1)
+        {
+            is_are = plural_en.runCheck("There");
+            is_are_fr = plural_fr.runCheck("");
+            appt_appts = pluralAppts_en.runCheck(is_are + " " + numberOfAppts);
+            appt_appts_fr = pluralAppts_fr.runCheck(is_are_fr + " " + numberOfAppts);
+        }
+        else
+        {
+            is_are = singular_en.runCheck("There");
+            is_are_fr = singular_fr.runCheck("");
+            appt_appts = singularAppt_en.runCheck(is_are + " " + numberOfAppts);
+            appt_appts_fr = pluralAppts_fr.runCheck(is_are_fr + " " + numberOfAppts);
         }
 
         if (Locale.getDefault().getDisplayLanguage().equals("français"))
         {
             Alert alert = new Alert((Alert.AlertType.INFORMATION));
-            alert.setTitle(appt_appts_fr);
+            alert.setTitle("Rendez-vous");
             alert.setHeaderText("Rendez-vous à venir");
-            alert.setContentText(is_are_fr + " " + numberOfAppts + " " + appt_appts_fr + " "
-                    + "dans les 15 prochaines minutes." + "\n" + imminentAppointmentListing(DBAppointments.getImminentAppts()));
+            alert.setContentText(appt_appts_fr + "\n" + imminentAppointmentListing(DBAppointments.getImminentAppts()));
             alert.showAndWait();
         }
         else
@@ -152,8 +171,7 @@ public class Login_Controller implements Initializable
             Alert alert = new Alert((Alert.AlertType.INFORMATION));
             alert.setTitle("Appointments");
             alert.setHeaderText("Upcoming Appointments");
-            alert.setContentText(is_are + " " + numberOfAppts + " " + appt_appts + " in the next 15 minutes. \n" +
-                    imminentAppointmentListing(DBAppointments.getImminentAppts()));
+            alert.setContentText(appt_appts +"\n" + imminentAppointmentListing(DBAppointments.getImminentAppts()));
             alert.showAndWait();
         }
     }
