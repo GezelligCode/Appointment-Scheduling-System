@@ -11,8 +11,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+/** DBCustomers Class: Handles all SQL Querying for the Customers table. */
 public class DBCustomers
 {
+    /** Gets all customers from the database.
+     *
+     * @return Returns an ObservableList of Customer type that reflects all customers.
+     */
     public static ObservableList<Customer> getAllCustomers()
     {
         ObservableList<Customer> customerList = FXCollections.observableArrayList();
@@ -53,6 +58,11 @@ public class DBCustomers
         return customerList;
     }
 
+    /** Adds a new customer to the database.
+     *
+     * @param customer A Customer object passed by the calling function in the AddCustomers_Controller.
+     * @param user A User object passed by the calling function in the AddCustomers_Controller.
+     */
     public static void addCustomer(Customer customer, User user)
     {
         // Removed TimeStamp from parameters. Not necessary (so far as I can tell).
@@ -88,6 +98,11 @@ public class DBCustomers
 
     }
 
+    /** Checks whether a custoemr selected for removal has existing appointments associated with their ID.
+     *
+     * @param customer A Customer object passed by the calling function in the Customers_Controller.
+     * @return Returns true if the given customer has no associated appointments; else returns false.
+     */
     public static boolean validateCustomerRemoval(Customer customer)
     {
         int customerID = customer.getCustomerID();
@@ -119,6 +134,11 @@ public class DBCustomers
         }
     }
 
+    /** Removes a customer from the database.
+     *
+     * @param customer A Customer object passed by the calling function in the Customers_Controller.
+     * @return Returns true if removal of the customer from the database is succesfull; else returns true.
+     */
     public static boolean removeCustomer(Customer customer)
     {
         int customerID = customer.getCustomerID();
@@ -144,6 +164,11 @@ public class DBCustomers
         }
     }
 
+    /** Updates an existing customer in the database.
+     *
+     * @param customer A Customer object passed by a calling function in the ModifyCustomers_Controller.
+     * @return Returns true if the update to the database is succesful; else returns false.
+     */
     public static boolean updateCustomer(Customer customer)
     {
         int customerID = customer.getCustomerID();
@@ -181,6 +206,11 @@ public class DBCustomers
         }
     }
 
+    /** Gets the customer ID for a given customer name.
+     *
+     * @param name A String value passed by the calling function, representing the customer name.
+     * @return Returns an integer value corresponding to the customer ID for the given customer name.
+     */
     public static int getCustomerIDByName(String name)
     {
         int customerID = 0;
@@ -211,6 +241,11 @@ public class DBCustomers
         return customerID;
     }
 
+    /** Gets the customer name associated with a given customer ID.
+     *
+     * @param ID An integer value passed by a calling function, representing the customer ID.
+     * @return Returns a String value that corresponds to the customer name for the given customer ID.
+     */
     public static String getCustomerNameByID(int ID)
     {
         String customerName = null;
@@ -241,6 +276,11 @@ public class DBCustomers
         return customerName;
     }
 
+    /** Gets the division ID for a given customer.
+     *
+     * @param customer A Customer object passed by a calling function.
+     * @return Returns an integer value corresponding to the division ID for the given customer.
+     */
     public static Integer getCustomerDivisionID(Customer customer)
     {
         int customerID = customer.getCustomerID();
@@ -272,6 +312,11 @@ public class DBCustomers
         return divisionID;
     }
 
+    /** Gets the country for a given customer.
+     *
+     * @param customer A Customer object passed by a calling function.
+     * @return Returns a String value corresponding to the country name for the given customer.
+     */
     public static String getCustomerCountry(Customer customer)
     {
        return DBCountries.getCountryNameByID(DBDivisions.getCountryIDByDivisionID(DBCustomers.getCustomerDivisionID(customer)));

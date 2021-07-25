@@ -29,6 +29,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
 public class Login_Controller implements Initializable
 {
     @FXML private TextField userName;
@@ -65,7 +66,6 @@ public class Login_Controller implements Initializable
         if(Credentials.validate(userName.getText(), userPassword.getText()))
         {
             DBConnection.startConnection();
-            DBCountries.checkDateConversion();
             DBUsers.loginUser(userName.getText(), userPassword.getText());
 
             imminentApptCheck();

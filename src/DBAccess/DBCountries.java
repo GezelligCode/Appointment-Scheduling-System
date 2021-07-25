@@ -10,8 +10,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+/** DBCountries Class: Handles all SQL querying for the Countries table. */
 public class DBCountries
 {
+    /** Gets all countries from the database.
+     *
+     * @return Returns an ObservableList of Country type, reflecting all countries in the database.
+     */
     public static ObservableList<Country> getAllCountries()
     {
         ObservableList<Country> countryList = FXCollections.observableArrayList();
@@ -40,6 +45,11 @@ public class DBCountries
         return countryList;
     }
 
+    /** Gets the country ID for a given country name.
+     *
+     * @param name A String value passed by the calling function, which reflects a country name.
+     * @return Returns an integer value representing the country ID for the given country name.
+     */
     public static int getCountryIDByName(String name)
     {
         int countryID = 0;
@@ -71,6 +81,11 @@ public class DBCountries
         return countryID;
     }
 
+    /** Gets the country name corresponding to a given country ID.
+     *
+     * @param ID An integer value passed by a calling function, that represents the country ID.
+     * @return Returns a String value that represents the country name associated with the given country ID.
+     */
     public static String getCountryNameByID(int ID)
     {
         String countryName = null;
@@ -100,25 +115,5 @@ public class DBCountries
         }
 
         return countryName;
-    }
-
-    public static void checkDateConversion()
-    {
-        System.out.println("CREATE DATE TEST");
-        String sql = "select Create_Date from countries";
-        try
-        {
-            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while(rs.next())
-            {
-                Timestamp ts = rs.getTimestamp("Create_Date");
-                System.out.println("CD: " + ts.toLocalDateTime().toString());
-            }
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
     }
 }

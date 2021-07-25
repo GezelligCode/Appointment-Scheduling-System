@@ -15,7 +15,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
 
-/** DB Appointments Class*/
+/** DBAppointments Class: Handles all SQL querying for the Appointments table. */
 public class DBAppointments
 {
     private static ObservableList<Appointment> imminentAppointments = FXCollections.observableArrayList();

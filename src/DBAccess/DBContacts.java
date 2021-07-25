@@ -9,8 +9,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/** DBContacts Class: Handles all SQL querying for the Contacts table. */
 public class DBContacts
 {
+    /** Gets all contacts from the database
+     *
+     * @return Returns an observable list of Contact type, reflecting all contacts.
+     */
     public static ObservableList<Contact> getAllContacts()
     {
         ObservableList<Contact> contactList = FXCollections.observableArrayList();
@@ -42,6 +47,10 @@ public class DBContacts
         return contactList;
     }
 
+    /** Gets all contact names from all contacts.
+     *
+     * @return Returns an ObservableList of String type, reflecting all contact names.
+     */
     public static ObservableList<String> getAllContactNames()
     {
         ObservableList<String> contactNameList = FXCollections.observableArrayList();
@@ -69,6 +78,10 @@ public class DBContacts
         return contactNameList;
     }
 
+    /** Adds a new contact to the database.
+     *
+     * @param contact A contact object passed by the calling function in the AddContacts_Controller.
+     */
     public static void addContact(Contact contact)
     {
         int contactID = 0;
@@ -92,6 +105,11 @@ public class DBContacts
         }
     }
 
+    /** Updates an existing contact in the database.
+     *
+     * @param contact A contact object passed by the calling function in the ModifyContacts_Controller.
+     * @return Returns true if the update to the database is successful; else returns false.
+     */
     public static boolean updateContact(Contact contact)
     {
         int contactID = contact.getContactID();
@@ -120,6 +138,11 @@ public class DBContacts
         }
     }
 
+    /** Checks if a contact selected for reomval has an associated appointment.
+     *
+     * @param contact A Contact object passed by the calling function in the Contacts_Controller.
+     * @return Returns true if the selected contact does not have any existing appointments associated with their contact ID; else returns false.
+     */
     public static boolean validateContactRemoval(Contact contact)
     {
         int contactID = contact.getContactID();
@@ -151,6 +174,11 @@ public class DBContacts
         }
     }
 
+    /** Removes a contact from the database.
+     *
+     * @param contact A Contact object passed by the calling function in the Contacts_Controller.
+     * @return Returns true if deletion from the database is successful; else returns false.
+     */
     public static boolean removeContact(Contact contact)
     {
         int contactID = contact.getContactID();
@@ -176,6 +204,11 @@ public class DBContacts
         }
     }
 
+    /** Gets the contact ID corresponding to a given contact name.
+     *
+     * @param contactName A String object passed by a calling function, that represents the name of the contact.
+     * @return Returns an integer value corresponding to the ID of the given contact.
+     */
     public static int getContactIDByName(String contactName)
     {
         int contactID = 0;
@@ -206,6 +239,11 @@ public class DBContacts
         return contactID;
     }
 
+    /** Gets the contact name for a given contact ID.
+     *
+     * @param ID An integer value passed by a calling function, that corresponds to the contact ID.
+     * @return Returns a String value representing the contact name for the given ID.
+     */
     public static String getContactNameByID(int ID)
     {
         String contactName = null;
@@ -236,6 +274,11 @@ public class DBContacts
         return contactName;
     }
 
+    /** Gets the contact e-mail for a given contact ID.
+     *
+     * @param ID An integer value passed by a calling function, that represents the ID of the given contact.
+     * @return Returns a String value representing the e-mail of the given contact.
+     */
     public static String getContactEmailByID(int ID)
     {
         String contactEmail = null;

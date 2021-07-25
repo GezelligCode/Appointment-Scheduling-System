@@ -2,17 +2,20 @@ package DBAccess;
 
 import Database.DBConnection;
 import Model.User;
-
 import java.sql.*;
 
+/** DBUsers: Handles all SQL querying for the Users table. */
 public class DBUsers
 {
-    //Upon login, this class should instantiate a user and add to the DB. The information should come from the login
-    //screen.
-    // So build out the method required and then call the method in the login controller.
-    //boolean added = false;
     private static User currentUser = null;
 
+    /** Logs in the user, if credential check returns valid. If valid, then checks if the user is pre-existing in the database;
+     * if not, then adds the user to the database.
+     *
+     * @param userNameInput A String value input by user in the Login screen.
+     * @param passwordInput A String value input by user in the Login screen.
+     * @return Returns a User object that reflects the currently-signed in user.
+     */
     public static User loginUser(String userNameInput, String passwordInput)
     {
         try
@@ -73,11 +76,19 @@ public class DBUsers
         return currentUser;
     }
 
+    /** Gets the currently-logged-in user.
+     *
+     * @return Returns a User object representing the current user.
+     */
     public static User getCurrentUser()
     {
         return currentUser;
     }
 
+    /** Gets the ID of the current user.
+     *
+     * @return Returns an integer value corresponding to the ID of the current user.
+     */
     public static int getCurrentUserID()
     {
         int userID = 0;

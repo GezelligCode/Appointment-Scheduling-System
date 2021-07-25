@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/** DBDivisions Class: Handles all SQL querying for the Divisions table. */
 public class DBDivisions
 {
     public static ObservableList<Division> getAllDivisions()
