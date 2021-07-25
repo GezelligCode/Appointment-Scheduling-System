@@ -65,7 +65,7 @@ public class DBContacts
 
             while(rs.next())
             {
-                String name = rs.getString("Contact_Name");
+                String name = rs.getString("Contact_ID") + ": " +  rs.getString("Contact_Name");
 
                 contactNameList.add(name);
             }
@@ -204,41 +204,6 @@ public class DBContacts
         }
     }
 
-    /** Gets the contact ID corresponding to a given contact name.
-     *
-     * @param contactName A String object passed by a calling function, that represents the name of the contact.
-     * @return Returns an integer value corresponding to the ID of the given contact.
-     */
-    public static int getContactIDByName(String contactName)
-    {
-        int contactID = 0;
-
-        try
-        {
-            String sql = "SELECT Contact_ID FROM contacts WHERE Contact_Name = ?";
-
-            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-            ps.setString(1, contactName);
-
-            ResultSet rs = ps.executeQuery();
-
-            if(rs.next())
-            {
-                contactID = rs.getInt("Contact_ID");
-            }
-            else
-            {
-                System.out.println("No contactID by that name is found");
-            }
-        }
-        catch (SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-
-        return contactID;
-    }
-
     /** Gets the contact name for a given contact ID.
      *
      * @param ID An integer value passed by a calling function, that corresponds to the contact ID.
@@ -271,7 +236,9 @@ public class DBContacts
             throwables.printStackTrace();
         }
 
-        return contactName;
+        String contactNameWithID = String.valueOf(ID) + ": " + contactName;
+
+        return contactNameWithID;
     }
 
     /** Gets the contact e-mail for a given contact ID.

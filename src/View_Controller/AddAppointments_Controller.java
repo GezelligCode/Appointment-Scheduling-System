@@ -3,6 +3,7 @@ package View_Controller;
 import DBAccess.*;
 import Model.Appointment;
 import Model.Customer;
+import Model.Contact;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -66,11 +67,11 @@ public class AddAppointments_Controller implements Initializable
     private final ObservableList<String> customerList = FXCollections.observableArrayList();
 
     /** Produces the list of all customers to select from. */
-    public ObservableList customers()
+    public ObservableList<String> customers()
     {
         for(Customer customer : DBCustomers.getAllCustomers())
         {
-            customerList.add(customer.getCustomerName());
+            customerList.add(String.valueOf(customer.getCustomerID()) + ": " + customer.getCustomerName());
         }
 
         return customerList;
@@ -81,7 +82,7 @@ public class AddAppointments_Controller implements Initializable
     {
         String contactName = apptContactName.getValue().toString();
 
-        apptContactEmail.setText(DBContacts.getContactEmailByID(DBContacts.getContactIDByName(contactName)));
+        apptContactEmail.setText(DBContacts.getContactEmailByID(Contact.getContactIDByName(contactName)));
     }
 
     /** Executes the addition of the appointment to the database. */
@@ -102,8 +103,8 @@ public class AddAppointments_Controller implements Initializable
                 Timestamp end = endTimeStamper();
                 String contactName = apptContactName.getValue().toString();
 
-                int contactID = DBContacts.getContactIDByName(contactName);
-                int customerID = DBCustomers.getCustomerIDByName(customer);
+                int contactID = Contact.getContactIDByName(contactName);
+                int customerID = Customer.getCustomerIDByName(customer);
                 int userID = DBUsers.getCurrentUserID();
 
                 Appointment appt = new Appointment(ApptID, title, description, location, type, start, end, customerID, userID, contactID);

@@ -206,41 +206,6 @@ public class DBCustomers
         }
     }
 
-    /** Gets the customer ID for a given customer name.
-     *
-     * @param name A String value passed by the calling function, representing the customer name.
-     * @return Returns an integer value corresponding to the customer ID for the given customer name.
-     */
-    public static int getCustomerIDByName(String name)
-    {
-        int customerID = 0;
-
-        try
-        {
-            String sql = "SELECT Customer_ID FROM customers WHERE Customer_Name = ?";
-
-            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-            ps.setString(1, name);
-
-            ResultSet rs = ps.executeQuery();
-
-            if(rs.next())
-            {
-                customerID = rs.getInt("Customer_ID");
-            }
-            else
-            {
-                System.out.println("No customerID by that name is found");
-            }
-        }
-        catch (SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-
-        return customerID;
-    }
-
     /** Gets the customer name associated with a given customer ID.
      *
      * @param ID An integer value passed by a calling function, representing the customer ID.
@@ -273,7 +238,9 @@ public class DBCustomers
             throwables.printStackTrace();
         }
 
-        return customerName;
+        String customerNameWithID = String.valueOf(ID) + ": " + customerName;
+
+        return customerNameWithID;
     }
 
     /** Gets the division ID for a given customer.

@@ -7,6 +7,7 @@ import DBAccess.DBUsers;
 import Model.Appointment;
 import static View_Controller.Appointments_Controller.*;
 
+import Model.Contact;
 import Model.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -95,7 +96,7 @@ public class ModifyAppointments_Controller implements Initializable
     {
         String contactName = apptContactName.getValue().toString();
 
-        apptContactEmail.setText(DBContacts.getContactEmailByID(DBContacts.getContactIDByName(contactName)));
+        apptContactEmail.setText(DBContacts.getContactEmailByID(Contact.getContactIDByName(contactName)));
     }
 
     /** Executes the update of the appointment in the database. */
@@ -113,12 +114,9 @@ public class ModifyAppointments_Controller implements Initializable
                 String type = apptType.getText();
                 Timestamp start = startTimeStamper();
                 Timestamp end = endTimeStamper();
-                //ToDo find a better way to get the customer ID than by referring to name; there can be duplicative name values
-                // in any real-world data set, but the IDs will be unique.
-                int customerID = DBCustomers.getCustomerIDByName(apptCustomerName.getValue().toString());
+                int customerID = Customer.getCustomerIDByName(apptCustomerName.getValue().toString());
                 int userID = DBUsers.getCurrentUserID();
-                //ToDo same as ToDo above; need better way to get ID than by name.
-                int contactID = DBContacts.getContactIDByName(apptContactName.getValue().toString());
+                int contactID = Contact.getContactIDByName(apptContactName.getValue().toString());
 
 
                 Appointment modifiedAppt = new Appointment(apptID, title, description, location, type, start, end, customerID,
@@ -132,9 +130,9 @@ public class ModifyAppointments_Controller implements Initializable
                         {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Appointments");
-                            alert.setHeaderText("Appointment Creation Successful");
+                            alert.setHeaderText("Appointment Modification Successful");
                             alert.setContentText("Appointment " + appt.getApptID() + " - " + appt.getTitle() + " - " +
-                                    appt.getType() + " succesfully added.");
+                                    appt.getType() + " succesfully updated.");
                             alert.showAndWait();
 
                             // Switch to Appts Scene
@@ -243,7 +241,7 @@ public class ModifyAppointments_Controller implements Initializable
     {
         for(Customer customer : DBCustomers.getAllCustomers())
         {
-            customerList.add(customer.getCustomerName());
+            customerList.add(String.valueOf(customer.getCustomerID()) + ": " + customer.getCustomerName());
         }
 
         return customerList;

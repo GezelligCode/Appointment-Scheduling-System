@@ -18,7 +18,7 @@ public class Contact
         this.eMail = eMail;
     }
 
-    /** Constructor for modifying current contacts. */
+    /** Constructor for modifying or reading current contacts. */
     public Contact(int ID, String contactName, String eMail)
     {
         this.contactID = ID;
@@ -54,6 +54,13 @@ public class Contact
     public void setContactEmail(String eMail)
     {
         this.eMail = eMail;
+    }
+
+    public static int getContactIDByName(String contactName)
+    {
+        int contactID = Integer.parseInt(contactName.substring(0, contactName.indexOf(":")));
+
+        return contactID;
     }
 
     /** Checks whether the addition or modification of a contact is valid. The parameters come from the input fields

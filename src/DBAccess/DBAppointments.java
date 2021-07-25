@@ -174,7 +174,7 @@ public class DBAppointments
             {
                 if(getAllAppointmentContactIDs().contains(rs.getInt("Contact_ID")))
                 {
-                    String contactName = rs.getString("Contact_Name");
+                    String contactName = rs.getString("Contact_ID")+ ": " + rs.getString("Contact_Name");
                     appointmentContactNames.add(contactName);
                 }
             }
@@ -237,7 +237,7 @@ public class DBAppointments
             {
                 if(getAllAppointmentCustomerIDs().contains(rs.getInt("Customer_ID")))
                 {
-                    String customerName = rs.getString("Customer_Name");
+                    String customerName = rs.getString("Customer_ID") + ": " + rs.getString("Customer_Name");
                     appointmentCustomerNames.add(customerName);
                 }
             }
@@ -302,7 +302,7 @@ public class DBAppointments
 
             while(rs.next())
             {
-                if(DBCustomers.getCustomerIDByName(customer) == rs.getInt("Customer_ID"))
+                if(Customer.getCustomerIDByName(customer) == rs.getInt("Customer_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -347,7 +347,7 @@ public class DBAppointments
 
             while(rs.next())
             {
-                if(DBContacts.getContactIDByName(contact) == rs.getInt("Contact_ID"))
+                if(Contact.getContactIDByName(contact) == rs.getInt("Contact_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -431,8 +431,8 @@ public class DBAppointments
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
-        int customer_ID = DBCustomers.getCustomerIDByName(customerName);
-        int contact_ID = DBContacts.getContactIDByName(contactName);
+        int customer_ID = Customer.getCustomerIDByName(customerName);
+        int contact_ID = Contact.getContactIDByName(contactName);
 
         try
         {
@@ -481,7 +481,7 @@ public class DBAppointments
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
-        int customer_ID = DBCustomers.getCustomerIDByName(customerName);
+        int customer_ID = Customer.getCustomerIDByName(customerName);
 
         try
         {
@@ -529,7 +529,7 @@ public class DBAppointments
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
-        int contact_ID = DBContacts.getContactIDByName(contactName);
+        int contact_ID = Contact.getContactIDByName(contactName);
 
         try
         {
@@ -579,7 +579,7 @@ public class DBAppointments
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
-        int customer_ID = DBCustomers.getCustomerIDByName(customerName);
+        int customer_ID = Customer.getCustomerIDByName(customerName);
 
         try
         {
@@ -631,7 +631,7 @@ public class DBAppointments
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
-        int contact_ID = DBContacts.getContactIDByName(contactName);
+        int contact_ID = Contact.getContactIDByName(contactName);
 
         try
         {
@@ -781,7 +781,7 @@ public class DBAppointments
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
-        int customer_ID = DBCustomers.getCustomerIDByName(customerName);
+        int customer_ID = Customer.getCustomerIDByName(customerName);
 
         try
         {
@@ -834,7 +834,7 @@ public class DBAppointments
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
-        int contact_ID = DBContacts.getContactIDByName(contactName);
+        int contact_ID = Contact.getContactIDByName(contactName);
 
         try
         {
@@ -896,8 +896,8 @@ public class DBAppointments
 
             while(rs.next())
             {
-                if(DBCustomers.getCustomerIDByName(customer) == rs.getInt("Customer_ID") &&
-                        DBContacts.getContactIDByName(contact) == rs.getInt("Contact_ID"))
+                if(Customer.getCustomerIDByName(customer) == rs.getInt("Customer_ID") &&
+                        Contact.getContactIDByName(contact) == rs.getInt("Contact_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -936,8 +936,8 @@ public class DBAppointments
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
-        int customer_ID = DBCustomers.getCustomerIDByName(customerName);
-        int contact_ID = DBContacts.getContactIDByName(contactName);
+        int customer_ID = Customer.getCustomerIDByName(customerName);
+        int contact_ID = Contact.getContactIDByName(contactName);
 
         try
         {
@@ -1002,8 +1002,8 @@ public class DBAppointments
             while(rs.next())
             {
                 if(month.equals(rs.getTimestamp("Start").toLocalDateTime().getMonth().toString()) &&
-                        DBCustomers.getCustomerIDByName(customerName) == rs.getInt("Customer_ID") &&
-                        DBContacts.getContactIDByName(contactName) == rs.getInt("Contact_ID"))
+                        Customer.getCustomerIDByName(customerName) == rs.getInt("Customer_ID") &&
+                        Contact.getContactIDByName(contactName) == rs.getInt("Contact_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -1050,7 +1050,7 @@ public class DBAppointments
             while(rs.next())
             {
                 if(month.equals(rs.getTimestamp("Start").toLocalDateTime().getMonth().toString()) &&
-                        DBCustomers.getCustomerIDByName(customerName) == rs.getInt("Customer_ID"))
+                        Customer.getCustomerIDByName(customerName) == rs.getInt("Customer_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -1097,7 +1097,7 @@ public class DBAppointments
             while(rs.next())
             {
                 if(month.equals(rs.getTimestamp("Start").toLocalDateTime().getMonth().toString()) &&
-                        DBContacts.getContactIDByName(contactName) == rs.getInt("Contact_ID"))
+                        Contact.getContactIDByName(contactName) == rs.getInt("Contact_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -1243,8 +1243,8 @@ public class DBAppointments
             while(rs.next())
             {
                 if(week.equals(rs.getString("weekStartDate")) &&
-                        DBCustomers.getCustomerIDByName(customerName) == rs.getInt("Customer_ID") &&
-                        DBContacts.getContactIDByName(contactName) == rs.getInt("Contact_ID") &&
+                        Customer.getCustomerIDByName(customerName) == rs.getInt("Customer_ID") &&
+                        Contact.getContactIDByName(contactName) == rs.getInt("Contact_ID") &&
                         typeName.equals(rs.getString("Type")))
                 {
                     int apptID = rs.getInt("Appointment_ID");
@@ -1297,8 +1297,8 @@ public class DBAppointments
             while(rs.next())
             {
                 if(week.equals(rs.getString("weekStartDate")) &&
-                        DBCustomers.getCustomerIDByName(customerName) == rs.getInt("Customer_ID") &&
-                        DBContacts.getContactIDByName(contactName) == rs.getInt("Contact_ID"))
+                        Customer.getCustomerIDByName(customerName) == rs.getInt("Customer_ID") &&
+                        Contact.getContactIDByName(contactName) == rs.getInt("Contact_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -1348,7 +1348,7 @@ public class DBAppointments
             while(rs.next())
             {
                 if(week.equals(rs.getString("weekStartDate")) &&
-                        DBCustomers.getCustomerIDByName(customerName) == rs.getInt("Customer_ID"))
+                        Customer.getCustomerIDByName(customerName) == rs.getInt("Customer_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");
@@ -1398,7 +1398,7 @@ public class DBAppointments
             while(rs.next())
             {
                 if(week.equals(rs.getString("weekStartDate")) &&
-                        DBContacts.getContactIDByName(contactName) == rs.getInt("Contact_ID"))
+                        Contact.getContactIDByName(contactName) == rs.getInt("Contact_ID"))
                 {
                     int apptID = rs.getInt("Appointment_ID");
                     String title = rs.getString("Title");

@@ -111,15 +111,16 @@ public class Customer
         return customerModifier;
     }
 
-
     public int getCustomerDivisionID()
     {
         return customerDivisionID;
     }
 
-    public void setDivisionID(int customerDivision)
+    public static int getCustomerIDByName(String customerName)
     {
-        this.customerDivisionID = customerDivision;
+        int customerID = Integer.parseInt(customerName.substring(0, customerName.indexOf(":")));
+
+        return customerID;
     }
 
     public String getCustomerDivisionName() { return customerDivisionName; }

@@ -177,7 +177,7 @@ public class Appointments_Controller implements Initializable
     }
 
     /** Redirects to Add Appointment scene. */
-    public void addApptHandler(ActionEvent event) throws IOException
+    public void addApptHandler() throws IOException
     {
         // Redirect to addAppt screen
         Parent addAppt = FXMLLoader.load(getClass().getResource("AddAppointments.fxml"));
@@ -188,7 +188,7 @@ public class Appointments_Controller implements Initializable
     }
 
     /** Redirects to Modify Appointment scene. */
-    public void modifyApptHandler(ActionEvent event) throws IOException
+    public void modifyApptHandler() throws IOException
     {
         selectedAppt = apptsTable.getSelectionModel().getSelectedItem();
         if(selectedAppt != null)
@@ -211,7 +211,7 @@ public class Appointments_Controller implements Initializable
     }
 
     /** Handles the deletion of an appointemnt from the database. */
-    public void removeApptHandler(ActionEvent event) throws IOException
+    public void removeApptHandler()
     {
         Appointment appt = apptsTable.getSelectionModel().getSelectedItem();
 
