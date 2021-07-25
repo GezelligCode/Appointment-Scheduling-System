@@ -13,17 +13,17 @@ import java.sql.Timestamp;
 /** DBCountries Class: Handles all SQL querying for the Countries table. */
 public class DBCountries
 {
-    /** Gets all countries from the database.
+    /** Gets all countries from the database that have company offices.
      *
-     * @return Returns an ObservableList of Country type, reflecting all countries in the database.
+     * @return Returns an ObservableList of Country type, reflecting all applicable countries in the database.
      */
-    public static ObservableList<Country> getAllCountries()
+    public static ObservableList<Country> getAllApplicableCountries()
     {
         ObservableList<Country> countryList = FXCollections.observableArrayList();
 
         try
         {
-            String sql = "SELECT * from countries";
+            String sql = "SELECT * FROM countries WHERE Country_ID = 38 OR Country_ID = 230 OR Country_ID = 231";
 
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
 

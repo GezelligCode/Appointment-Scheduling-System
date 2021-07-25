@@ -63,7 +63,7 @@ public class AddCustomers_Controller implements Initializable
     {
         ObservableList<String> countries = FXCollections.observableArrayList();
 
-        for(Country country : DBCountries.getAllCountries())
+        for(Country country : DBCountries.getAllApplicableCountries())
         {
             countries.add(country.getCountry());
         }
