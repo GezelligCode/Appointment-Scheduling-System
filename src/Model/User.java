@@ -1,8 +1,8 @@
 package Model;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 
+/** User Class: Handles all manipulation methods for User objects. */
 public class User
 {
     private int userID;
@@ -13,7 +13,7 @@ public class User
     private Timestamp userModifyDate;
     private String userModifier;
 
-    //Constructor
+    /** Constructor for creating users. */
     public User(int userID, String userName, String userPassword, Timestamp userCreateDate, String userCreator,
                 Timestamp userModifyDate, String userModifier)
     {
@@ -26,14 +26,13 @@ public class User
         this.userModifier = userModifier;
     }
 
-    // Constructor for initial login
+    /** Constructor for initial login. */
     public User(int userID, String userName, String userPassword)
     {
         this.userID = userID;
         this.userName = userName;
         this.userPassword = userPassword;
     }
-
 
     public int getUserID()
     {
@@ -60,48 +59,4 @@ public class User
         return userPassword;
     }
 
-    public void setUserPassword(String userPassword)
-    {
-        this.userPassword = userPassword;
-    }
-
-    public Timestamp getUserCreateDate()
-    {
-        return userCreateDate;
-    }
-
-    public void setUserCreateDate(Timestamp userCreateDate)
-    {
-        this.userCreateDate = userCreateDate;
-    }
-
-    public String getUserCreator()
-    {
-        return userCreator;
-    }
-
-    public void setUserCreator(String userCreator)
-    {
-        this.userCreator = userCreator;
-    }
-
-    public Timestamp getUserModifyDate()
-    {
-        return userModifyDate;
-    }
-
-    public void setUserModifyDate(Timestamp userModifyDate)
-    {
-        this.userModifyDate = userModifyDate;
-    }
-
-    public String getUserModifier()
-    {
-        return userModifier;
-    }
-
-    public void setUserModifier(String userModifier)
-    {
-        this.userModifier = userModifier;
-    }
 }

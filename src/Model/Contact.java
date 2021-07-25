@@ -4,20 +4,21 @@ import javafx.scene.control.Alert;
 
 import java.util.regex.Pattern;
 
+/** Contacts Class: Handles the manipulation methods for Contact objects. */
 public class Contact
 {
     private int contactID;
     private String contactName;
     private String eMail;
 
-    // Constructor for creating new contacts
+    /** Constructor for creating new contacts. */
     public Contact(String contactName, String eMail)
     {
         this.contactName = contactName;
         this.eMail = eMail;
     }
 
-    // Constructor for modifying contacts
+    /** Constructor for modifying current contacts. */
     public Contact(int ID, String contactName, String eMail)
     {
         this.contactID = ID;
@@ -55,6 +56,8 @@ public class Contact
         this.eMail = eMail;
     }
 
+    /** Checks whether the addition or modification of a contact is valid. The parameters come from the input fields
+     * of the Add or Modify Contact screens. */
     public static boolean validateContact(String name, String eMail)
     {
         String errors = "";

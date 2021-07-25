@@ -1,31 +1,17 @@
 package Model;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
+/** Country Class: Handles the object manipulation methods for all Country objects. */
 public class Country
 {
     private int country_ID;
 
     private String country;
 
-    //private ObservableList<Countries> countryList = FXCollections.observableArrayList();
-
-    //Class Constructor needed
+    /** Constructor for instantiating countries. */
    public Country(int country_ID, String country)
     {
         this.country_ID = country_ID;
         this.country = country;
-    }
-
-    public void setCountry_ID(int ID)
-    {
-        this.country_ID = ID;
-    }
-
-    public int getCountry_ID()
-    {
-        return this.country_ID;
     }
 
     public void setCountry(String name)

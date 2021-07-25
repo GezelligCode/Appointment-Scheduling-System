@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-
+/** Main Class: Program begins here. */
 public class Main extends Application
 {
     @Override

@@ -1,11 +1,9 @@
 package Model;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-
 import java.sql.Timestamp;
-import java.util.regex.Pattern;
 
+/** Customer Class: Handles all manipulation methods for Customer objects. */
 public class Customer
 {
     private int customerID;
@@ -20,7 +18,7 @@ public class Customer
     private int customerDivisionID;
     private String customerDivisionName;
 
-    // Constructor for adding new customers
+    /** Constructor for creating new customers. */
     public Customer(String customerName, String customerAddress, String customerPostalCode, String customerPhone,
                     int customerDivisionID, User user)
     {
@@ -32,7 +30,7 @@ public class Customer
         this.customerCreator = user.getUserName();
     }
 
-    // Constructor for modifying a current customer
+    /** Constructor for modifying current customers. */
     public Customer(int customerID, String customerName, String customerAddress, String customerPostalCode,
                     String customerPhone, int customerDivisionID, User user)
     {
@@ -45,19 +43,7 @@ public class Customer
         this.customerDivisionID = customerDivisionID;
     }
 
-    // Constructor for modifying a customer from a country without a division
-    public Customer(int customerID, String customerName, String customerAddress, String customerPostalCode,
-                    String customerPhone, User user)
-    {
-        this.customerID = customerID;
-        this.customerName = customerName;
-        this.customerAddress = customerAddress;
-        this.customerPostalCode = customerPostalCode;
-        this.customerPhone = customerPhone;
-        this.customerModifier = user.getUserName();
-    }
-
-    // Constructor for getting all customers from DB
+    /** Constructor for getting all Customer objects from the database. */
     public Customer(int customerID, String customerName, String customerAddress, String customerPostalCode, String customerPhone,
                     String customerCreator, String customerDivisionName)
     {
@@ -68,18 +54,6 @@ public class Customer
         this.customerPhone = customerPhone;
         this.customerCreator = customerCreator;
         this.customerDivisionName = customerDivisionName;
-    }
-
-    // Constructor for modifying customers
-    public Customer(Customer customer, Timestamp customerModifyDate, String customerModifier, int customerDivisionID)
-    {
-        this.customerName = customer.getCustomerName();
-        this.customerAddress = customer.getCustomerAddress();
-        this.customerPostalCode = customer.getCustomerPostalCode();
-        this.customerPhone = customer.getCustomerPhone();
-        this.customerModifyDate = customerModifyDate;
-        this.customerModifier = customerModifier;
-        this.customerDivisionID = customer.getCustomerDivisionID();
     }
 
     public int getCustomerID()
@@ -132,45 +106,11 @@ public class Customer
         this.customerPhone = customerPhone;
     }
 
-    public Timestamp getCustomerCreateDate()
-    {
-        return customerCreateDate;
-    }
-
-    public void setCustomerCreateDate(Timestamp customerCreateDate)
-    {
-        this.customerCreateDate = customerCreateDate;
-    }
-
-    public String getCustomerCreator()
-    {
-        return customerCreator;
-    }
-
-    public void setCustomerCreator(String customerCreator)
-    {
-        this.customerCreator = customerCreator;
-    }
-
-    public Timestamp getCustomerModifyDate()
-    {
-        return customerModifyDate;
-    }
-
-    public void setCustomerModifyDate(Timestamp customerModifyDate)
-    {
-        this.customerModifyDate = customerModifyDate;
-    }
-
     public String getCustomerModifier()
     {
         return customerModifier;
     }
 
-    public void setCustomerModifier(String customerModifier)
-    {
-        this.customerModifier = customerModifier;
-    }
 
     public int getCustomerDivisionID()
     {
@@ -184,8 +124,8 @@ public class Customer
 
     public String getCustomerDivisionName() { return customerDivisionName; }
 
-    public void setCustomerDivisionName(String customerDivisionName) { this.customerDivisionName = customerDivisionName; }
-
+    /** Checks whether the addition or modification of a customer is valid. The parameters come from the input fields
+     * of the Add or Modify Customer screens. */
     public static boolean validateCustomer(String name, String address, String postalCode, String phone)
     {
         String errors = "";

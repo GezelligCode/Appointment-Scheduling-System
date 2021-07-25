@@ -3,12 +3,12 @@ package Model;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
 
+/** Appointment Class: Handles the manipulation methods for Appointment objects. */
 public class Appointment
 {
     private int apptID;
@@ -18,16 +18,13 @@ public class Appointment
     private String type;
     private Timestamp start;
     private Timestamp end;
-    private Timestamp createDate;
-    private String creatorName;
-    private Timestamp modifiedDate;
-    private String modifierName;
     private int customerID;
     private int userID;
     private int contactID;
     private Date date;
     private Time time;
 
+    /** Constructor for adding and modifying appointments. */
     public Appointment(int apptID, String title, String description, String location, String type, Timestamp start,
                        Timestamp end, int customerID, int userID, int contactID)
     {
@@ -43,7 +40,7 @@ public class Appointment
         this.contactID = contactID;
     }
 
-    // Constructor for holding imminent appointments
+    /** An abbreviated constructor for creating a list of imminent appointments. */
     public Appointment(int apptID, Date date, Time time)
     {
         this.apptID = apptID;
@@ -155,6 +152,8 @@ public class Appointment
         return this.time;
     }
 
+    /** Checks whether the addition or modification of an appointment is valid. The parameters come from the input fields
+     * of the Add or Modify Appointment screens. */
     public static boolean validateAppt(ComboBox customer, TextField title, TextField description, TextField location,
                                 TextField type, ComboBox contact, Timestamp start, Timestamp end)
     {
