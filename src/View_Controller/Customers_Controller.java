@@ -3,7 +3,6 @@ package View_Controller;
 import DBAccess.DBAppointments;
 import DBAccess.DBCustomers;
 import Model.Appointment;
-import Model.Country;
 import Model.Customer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,11 +15,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/** FXML Customers_Controller Class: Handles the main customers screen and display of all customers and their associated
+ * appointments. Also redirects to Add or Modify Customers scene. Deletion of customers is handled directly.
+ */
 public class Customers_Controller implements Initializable
 {
     @FXML private TableView<Customer> customersTable;
@@ -30,7 +31,6 @@ public class Customers_Controller implements Initializable
     @FXML private TableColumn<Customer, String> customerPostalCode;
     @FXML private TableColumn<Customer, String> customerPhone;
     @FXML private TableColumn<Customer, String> customerDivision;
-    //@FXML private TableColumn<Country, String> customerCountry;
     @FXML private TableView<Appointment> assocApptsTable;
     @FXML private TableColumn<Appointment, Integer> apptID;
     @FXML private TableColumn<Appointment, String> title;
@@ -42,16 +42,21 @@ public class Customers_Controller implements Initializable
     @FXML private TableColumn<Appointment, Integer> assocCustomerID;
     @FXML private TableColumn<Appointment, Integer> userID;
     @FXML private TableColumn<Appointment, Integer> contactID;
-
     @FXML private MenuButton menuBar;
 
     private static Customer selectedCustomer = null;
 
+    /** Public getter for the private selectedCustomer variable for the ModifyCustomers_Controller to use. */
     public static Customer getSelectedCustomer()
     {
         return selectedCustomer;
     }
 
+    /** Sets the initial conditions of the Contacts scene, e.g. pre-populating the table views.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -60,10 +65,9 @@ public class Customers_Controller implements Initializable
         populateApptsTable();
     }
 
+    /** Redirects to the Add Customer scene. */
     public void addCustomerHandler(ActionEvent event) throws IOException
     {
-
-        // Switch to Add Customer Scene
         MenuItem menuItem = (MenuItem)event.getTarget();
         ContextMenu cm = menuItem.getParentPopup();
         Parent addCustomer = FXMLLoader.load(getClass().getResource("AddCustomers.fxml"));
@@ -73,14 +77,12 @@ public class Customers_Controller implements Initializable
         window.show();
     }
 
+    /** Redirects to the Modify Customer scene. */
     public void modifyCustomerHandler(ActionEvent event) throws IOException
     {
         selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
         if(selectedCustomer != null)
         {
-            // Switch to Modify Customer Scene
-//            MenuItem menuItem = (MenuItem)event.getTarget();
-//            ContextMenu cm = menuItem.getParentPopup();
             Parent modifyCustomer = FXMLLoader.load(getClass().getResource("ModifyCustomers.fxml"));
             Scene scene = new Scene(modifyCustomer);
             Stage window = (Stage)menuBar.getScene().getWindow();
@@ -97,7 +99,8 @@ public class Customers_Controller implements Initializable
         }
     }
 
-    public void deleteHandler(ActionEvent event) throws IOException
+    /** Executes the removal of a customer from the database. */
+    public void deleteHandler()
     {
         Customer customer = customersTable.getSelectionModel().getSelectedItem();
 
@@ -148,10 +151,9 @@ public class Customers_Controller implements Initializable
         }
     }
 
+    /** Redirects to the main Appointments screen. */
     public void cancelHandler(ActionEvent event) throws IOException
     {
-
-        // Switch to Appts Scene
         Parent addProduct = FXMLLoader.load(getClass().getResource("Appointments.fxml"));
         Scene scene = new Scene(addProduct);
         Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -159,6 +161,7 @@ public class Customers_Controller implements Initializable
         window.show();
     }
 
+    /** Maps the Customer fields to the table view columns. */
     private void populateCustomers()
     {
         customerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
@@ -169,11 +172,13 @@ public class Customers_Controller implements Initializable
         customerDivision.setCellValueFactory(new PropertyValueFactory<>("customerDivisionName"));
     }
 
+    /** Updates the Customers table view with all contacts. */
     private void updateCustomersTable()
     {
         customersTable.setItems(DBCustomers.getAllCustomers());
     }
 
+    /** Maps the Appointment fields to the Associated Appointments table view columns. */
     private void populateApptsTable()
     {
         apptID.setCellValueFactory(new PropertyValueFactory<>("ApptID"));
@@ -188,7 +193,8 @@ public class Customers_Controller implements Initializable
         contactID.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
     }
 
-    public void updateAssociatedApptsTable(MouseEvent event) throws IOException
+    /** Updates the Associated Appointments table with the appointments associated with a customer selected by the user. */
+    public void updateAssociatedApptsTable(MouseEvent event)
     {
         if(event.getSource() == customersTable)
         {
@@ -211,6 +217,4 @@ public class Customers_Controller implements Initializable
             System.out.println("No event found");
         }
     }
-
-
 }

@@ -21,11 +21,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/** FXML AddCustomers_Controller Class: Handles addition of new customers. */
 public class AddCustomers_Controller implements Initializable
 {
     @FXML private TextField customerID;
@@ -36,6 +36,11 @@ public class AddCustomers_Controller implements Initializable
     @FXML private ComboBox customerCountry;
     @FXML private ComboBox customerDivision;
 
+    /** Sets the initial conditions of the Add Customers scene, such as prepopulating the comboboxes.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -45,6 +50,7 @@ public class AddCustomers_Controller implements Initializable
         customerDivision.setItems(divisionList());
     }
 
+    /** Populates the division field based on the user-selected country. */
     public void countrySelectionHandler()
     {
         String countrySelected = customerCountry.getValue().toString();
@@ -52,6 +58,7 @@ public class AddCustomers_Controller implements Initializable
         customerDivision.setItems(divisionsFilteredByCountry(countrySelected));
     }
 
+    /** Produces the list of all countries to select from. */
     public ObservableList countryList()
     {
         ObservableList<String> countries = FXCollections.observableArrayList();
@@ -64,6 +71,7 @@ public class AddCustomers_Controller implements Initializable
         return countries;
     }
 
+    /** Produces the list of all divisions from the database. */
     public ObservableList divisionList()
     {
         ObservableList<String> divisions = FXCollections.observableArrayList();
@@ -76,6 +84,7 @@ public class AddCustomers_Controller implements Initializable
         return divisions;
     }
 
+    /** Produces the list of all divisions to select from, based on selected country. */
     public ObservableList divisionsFilteredByCountry(String country)
     {
         ObservableList<String> divisions = FXCollections.observableArrayList();
@@ -88,6 +97,7 @@ public class AddCustomers_Controller implements Initializable
         return divisions;
     }
 
+    /** Executes the addition of the customer to the database. */
     public void saveHandler(ActionEvent event) throws IOException
     {
         try
@@ -156,6 +166,7 @@ public class AddCustomers_Controller implements Initializable
 
     }
 
+    /** Returns the user to the main Customers screen. */
     public void cancelHandler(ActionEvent event) throws IOException
     {
 
@@ -166,8 +177,4 @@ public class AddCustomers_Controller implements Initializable
         window.setScene(scene);
         window.show();
     }
-
-
-
-
 }

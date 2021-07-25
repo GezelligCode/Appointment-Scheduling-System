@@ -19,22 +19,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ResourceBundle;
-import java.util.TimeZone;
 
+/** FXML ModifyAppointments_Controller Class: Handles the modification of a current appointment. */
 public class ModifyAppointments_Controller implements Initializable
 {
     @FXML private TextField apptID;
@@ -58,11 +51,20 @@ public class ModifyAppointments_Controller implements Initializable
     @FXML private ToggleButton endAM;
     @FXML private  ToggleButton endPM;
 
+    /** A private data member holding an object passed from the main Appointments_Controller, that represents the
+     * user-selected appointment to modify.
+     */
     private Appointment appt = getSelectedAppt();
+
     private ObservableList<Integer> selectableHour = FXCollections.observableArrayList();
     private ObservableList<String> selectableMinute = FXCollections.observableArrayList();
     private ObservableList<String> customerList = FXCollections.observableArrayList();
 
+    /** Sets the initial conditions of the Modify Appointments scene, e.g. pre-populating all the input fields.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -88,13 +90,15 @@ public class ModifyAppointments_Controller implements Initializable
         }
     }
 
-    public void contactEmailHandler() throws IOException
+    /** Populates the E-mail field based on the selected contact. */
+    public void contactEmailHandler()
     {
         String contactName = apptContactName.getValue().toString();
 
         apptContactEmail.setText(DBContacts.getContactEmailByID(DBContacts.getContactIDByName(contactName)));
     }
 
+    /** Executes the update of the appointment in the database. */
     public void saveHandler(ActionEvent event) throws IOException, ParseException
     {
         try
@@ -153,10 +157,9 @@ public class ModifyAppointments_Controller implements Initializable
                     "Start and End times.");
             alert.showAndWait();
         }
-
-
     }
 
+    /** Redirects to the main Appointments screen. */
     public void cancelHandler(ActionEvent event) throws IOException
     {
         // Switch to Appts Scene
@@ -167,16 +170,27 @@ public class ModifyAppointments_Controller implements Initializable
         window.show();
     }
 
+    /** Outputs a timestamp for the start date and time based on user input. */
     public Timestamp startTimeStamper() throws ParseException
     {
         return getTimestamp(apptStartDate, apptStartHour, apptStartMin, am_pmStart);
     }
 
+    /** Outputs a timestamp for the end date and time based on user input. */
     public Timestamp endTimeStamper() throws ParseException
     {
         return getTimestamp(apptEndDate, apptEndHour, apptEndMin, am_pmEnd);
     }
 
+    /** Parses the date and times as selected by the user.
+     *
+     * @param datePicker A DatePicker control, representing either the start date or the end date.
+     * @param hourPicker A ComboBox control, representing either the start hour or the end hour.
+     * @param minutePicker A ComboBox control, representing either the start minute or the end minute.
+     * @param am_pm A ToggleGroup control, representing AM or PM for either the start or end time.
+     * @return Returns a Timestamp object that reflects the complete date and time for the start or end time.
+     * @throws ParseException Necessary for the conversion of 12-hour format to 24-hour format.
+     */
     private Timestamp getTimestamp(DatePicker datePicker, ComboBox hourPicker, ComboBox minutePicker, ToggleGroup am_pm) throws ParseException
     {
         String date = datePicker.getValue().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
@@ -198,6 +212,7 @@ public class ModifyAppointments_Controller implements Initializable
         return Timestamp.valueOf(concatTimeStamp);
     }
 
+    /** Prepopulates the form's fields with the data values from the pre-selected appointment to modify. */
     public void setFields() throws ParseException
     {
         apptID.setText(Integer.toString(appt.getApptID()));
@@ -223,6 +238,7 @@ public class ModifyAppointments_Controller implements Initializable
         apptContactEmail.setText(DBContacts.getContactEmailByID(appt.getContactID()));
     }
 
+    /** Produces the list of all customers to select from. */
     public ObservableList customers()
     {
         for(Customer customer : DBCustomers.getAllCustomers())
@@ -233,6 +249,10 @@ public class ModifyAppointments_Controller implements Initializable
         return customerList;
     }
 
+    /** Creates an array of numbers, representing hours of the clock.
+     *
+     * @return Returns an array of integer type, holding all hours in 12-hour format.
+     */
     public ObservableList apptHour()
     {
         int[] hours = new int[]{12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
@@ -248,6 +268,10 @@ public class ModifyAppointments_Controller implements Initializable
         return selectableHour;
     }
 
+    /** Creates an array of numbers in String form, representing minutes in intervals of 5 minutes.
+     *
+     * @return Returns an array of String type, holding minutes at intervals of 5 minutes from 00 to 55.
+     */
     public ObservableList apptMin()
     {
         String[] mins = new String[]{"00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"};
@@ -263,6 +287,7 @@ public class ModifyAppointments_Controller implements Initializable
         return selectableMinute;
     }
 
+    /** Converts time from 12-hour format into 24-hour format. */
     public void timeConverter(Timestamp datetime, ToggleGroup start_end, ComboBox hour)
     {
 

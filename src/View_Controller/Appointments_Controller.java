@@ -15,12 +15,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ResourceBundle;
 
+/** FXML Appointments_Controller Class: Handles the main Appointment screen, reporting, and redirects to other screens. */
 public class Appointments_Controller implements Initializable
 {
     @FXML private TableView<Appointment> apptsTable;
@@ -60,16 +60,19 @@ public class Appointments_Controller implements Initializable
     @FXML private Label apptCtr;
     @FXML private Label reportVariables;
 
-    //private boolean defaultFilter = true;
-    private boolean apptsInitialized = false;
-
     private static Appointment selectedAppt = null;
 
+    /** Public getter for the private selectedAppt variable for the ModifyAppointments_Controller to use. */
     public static Appointment getSelectedAppt()
     {
         return selectedAppt;
     }
 
+    /** Sets the initial conditions of the Appointments scene, such as prepopulating the table views.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -85,6 +88,268 @@ public class Appointments_Controller implements Initializable
         reportVariables.setText(" - All Appointments");
     }
 
+    /** Produces a list of all Months to filter appointments on. */
+    public ObservableList<String> monthNames()
+    {
+        ObservableList<String> monthList = FXCollections.observableArrayList();
+
+        for(Timestamp ts : DBAppointments.getAllAppointmentTimestamps())
+        {
+            if(!(monthList.contains(ts.toLocalDateTime().getMonth().toString())))
+            {
+                monthList.add(ts.toLocalDateTime().getMonth().toString());
+            }
+        }
+        return monthList;
+    }
+
+    /** Produces a list of all Weeks to filter appointments on. */
+    public ObservableList<String> weekNames()
+    {
+        ObservableList<String> weekList = FXCollections.observableArrayList();
+
+        for(String week : DBAppointments.getAllAppointmentWeeks())
+        {
+            if(!(weekList.contains(week)))
+            {
+                weekList.add(week);
+            }
+        }
+        return weekList;
+    }
+
+    /** Produces a list of all Customers to filter appointments on. */
+    public ObservableList<String> customerNames()
+    {
+        ObservableList<String> customerList;
+
+        customerList = DBAppointments.getAllAppointmentCustomerNames();
+
+        return customerList;
+    }
+
+    /** Products a list of all Contacts to filter appointments on. */
+    public ObservableList<String> contactNames()
+    {
+        ObservableList<String> contactList;
+
+        contactList = DBAppointments.getAllAppointmentContactNames();
+
+        return contactList;
+    }
+
+    /** Produces a list of all Types to filter appointments on. */
+    public ObservableList<String> typeNames()
+    {
+        ObservableList<String> typeList = FXCollections.observableArrayList();
+
+        for(String type : DBAppointments.getAllAppointmentTypes())
+        {
+            if(!(typeList.contains(type)))
+            {
+                typeList.add(type);
+            }
+        }
+
+        return typeList;
+    }
+
+    /** Redirects to Customers scene. */
+    public void customerMenuHandler(ActionEvent event) throws IOException
+    {
+        // Redirect to Customers Screen
+        Parent customers = FXMLLoader.load(getClass().getResource("Customers.fxml"));
+        Scene scene = new Scene(customers);
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        window.setScene(scene);
+        window.show();
+    }
+
+    /** Redirects to Contacts scene. */
+    public void consultantsMenuHandler(ActionEvent event) throws IOException
+    {
+        // Redirect to consultants Screen
+        Parent consultants = FXMLLoader.load(getClass().getResource("Contacts.fxml"));
+        Scene scene = new Scene(consultants);
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        window.setScene(scene);
+        window.show();
+    }
+
+    /** Redirects to Add Appointment scene. */
+    public void addApptHandler(ActionEvent event) throws IOException
+    {
+        // Redirect to addAppt screen
+        Parent addAppt = FXMLLoader.load(getClass().getResource("AddAppointments.fxml"));
+        Scene scene = new Scene(addAppt);
+        Stage window = (Stage)menuBar.getScene().getWindow();
+        window.setScene(scene);
+        window.show();
+    }
+
+    /** Redirects to Modify Appointment scene. */
+    public void modifyApptHandler(ActionEvent event) throws IOException
+    {
+        selectedAppt = apptsTable.getSelectionModel().getSelectedItem();
+        if(selectedAppt != null)
+        {
+            // redirect to Modify Appt Screen
+            Parent modifyAppt = FXMLLoader.load(getClass().getResource("ModifyAppointments.fxml"));
+            Scene scene = new Scene(modifyAppt);
+            Stage window = (Stage)menuBar.getScene().getWindow();
+            window.setScene(scene);
+            window.show();
+        }
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Appointments");
+            alert.setHeaderText("No Appointment Selected");
+            alert.setContentText("Please select an appointment to modify");
+            alert.showAndWait();
+        }
+    }
+
+    /** Handles the deletion of an appointemnt from the database. */
+    public void removeApptHandler(ActionEvent event) throws IOException
+    {
+        Appointment appt = apptsTable.getSelectionModel().getSelectedItem();
+
+        if(appt != null)
+        {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Appointments");
+            confirm.setHeaderText("Confirm Appointment Cancellation");
+            confirm.setContentText("Are you sure you want to delete the following appointment?\n"+
+                    "Appointment " + appt.getApptID() + ": " + appt.getTitle() + " - " + appt.getType());
+            confirm.showAndWait();
+
+            if(confirm.getResult() == ButtonType.OK)
+            {
+                if(DBAppointments.removeAppt(appt))
+                {
+                    updateApptsTable();
+                    Alert alert = new Alert((Alert.AlertType.INFORMATION));
+                    alert.setTitle("Appointments");
+                    alert.setHeaderText("Cancellation Complete");
+                    alert.setContentText("Appointment " + appt.getApptID() + ": " + appt.getTitle() + " - " +
+                            appt.getType() + " is cancelled.");
+                    alert.showAndWait();
+                }
+            }
+        }
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Appointments");
+            alert.setHeaderText("No Appointment Selected");
+            alert.setContentText("Please select an appointment to delete");
+            alert.showAndWait();
+        }
+
+    }
+
+    /** Maps the appointment fields to the table columns. */
+    private void populateApptsTable()
+    {
+        apptID.setCellValueFactory(new PropertyValueFactory<>("ApptID"));
+        title.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        description.setCellValueFactory(new PropertyValueFactory<>("Description"));
+        location.setCellValueFactory(new PropertyValueFactory<>("Location"));
+        type.setCellValueFactory(new PropertyValueFactory<>("Type"));
+        start.setCellValueFactory(new PropertyValueFactory<>("Start"));
+        end.setCellValueFactory(new PropertyValueFactory<>("End"));
+        customerID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
+        userID.setCellValueFactory(new PropertyValueFactory<>("UserID"));
+        contactID.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
+    }
+
+    /** Updates the appointments table view to show all appointments. */
+    private void updateApptsTable()
+    {
+        apptsTable.setItems(DBAppointments.getAllAppointments());
+        updateApptCtr();
+    }
+
+    /** Sets all filters to 'All', thus showing all appointments. */
+    public void resetAllFilters()
+    {
+        allTime.setSelected(true);
+        allCustomers.setSelected(true);
+        allContacts.setSelected(true);
+        allTypes.setSelected(true);
+    }
+
+    /** Updates the Appointment Count to reflect the count of appointments as shown in the table view. */
+    public void updateApptCtr()
+    {
+        int apptCount = 0;
+
+        for(Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
+        {
+            apptCount++;
+        }
+
+        apptCtr.setText(Integer.toString(apptCount));
+        contactsRankedByApptCt();
+        divisionsRankedByCustomerCt();
+        typesRankedByApptType();
+        contactsRankedByApptTime();
+    }
+
+    /** Updates the contactsRankedByApptCt table view to show all contacts ranked by their appointment count. */
+    public void contactsRankedByApptCt()
+    {
+        contactName.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+
+        contactsByApptCt.setItems(DBAppointments.rankContactsByApptCount());
+        contactsByApptCt.refresh();
+    }
+
+    /** Updates the contactsRankedByApptTime table view to show all contacts ranked by their total appointment time. */
+    public void contactsRankedByApptTime()
+    {
+        contactApptTimeRanking.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+
+        contactsByApptTime.setItems(DBAppointments.rankContactsByApptTime());
+        contactsByApptTime.refresh();
+    }
+
+    /** Updates the divisionsRankedByCustomerCt table view to show all divisions ranked by their customer count. */
+    public void divisionsRankedByCustomerCt()
+    {
+
+        divisionRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+
+        divisionsByCustomerCt.setItems(DBAppointments.rankDivisionsByCustomerCount());
+        divisionsByCustomerCt.refresh();
+    }
+
+    /** Updates the typesRankedByApptType table view to show all types ranked by their appointment count. */
+    public void typesRankedByApptType()
+    {
+        typeRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+
+        typesByApptCt.setItems(DBAppointments.rankTypesByApptCount());
+        typesByApptCt.refresh();
+    }
+
+    /** Exits the user from the program. */
+    public void exitProgramHandler()
+    {
+        Alert alert = new Alert((Alert.AlertType.CONFIRMATION));
+        alert.setTitle("Appointments");
+        alert.setHeaderText("Confirm Exit");
+        alert.setContentText("Are you sure you want to close the program?");
+        alert.showAndWait();
+
+        if(alert.getResult() == ButtonType.OK)
+        {
+            System.exit(0);
+        }
+    }
+
+    /** Controls the displayed appointments listing based on which 'All' filters are selected for any of the report criteria. */
     public void resetFilterHandler(ActionEvent event) throws IOException
     {
         if(event.getSource() == allTime)
@@ -529,6 +794,7 @@ public class Appointments_Controller implements Initializable
         }
     }
 
+    /** Controls the displayed appointments listing based on which non-All filters are selected for any of the report criteria. */
     public void filterHandler(ActionEvent event) throws IOException
     {
         ComboBox cb = (ComboBox) event.getSource();
@@ -1048,270 +1314,6 @@ public class Appointments_Controller implements Initializable
                     }
                 }
             }
-        }
-    }
-
-    public ObservableList<String> monthNames()
-    {
-        ObservableList<String> monthList = FXCollections.observableArrayList();
-
-        for(Timestamp ts : DBAppointments.getAllAppointmentTimestamps())
-        {
-            if(!(monthList.contains(ts.toLocalDateTime().getMonth().toString())))
-            {
-                monthList.add(ts.toLocalDateTime().getMonth().toString());
-            }
-        }
-        return monthList;
-    }
-
-    public ObservableList<String> weekNames()
-    {
-        ObservableList<String> weekList = FXCollections.observableArrayList();
-
-        for(String week : DBAppointments.getAllAppointmentWeeks())
-        {
-            if(!(weekList.contains(week)))
-            {
-                weekList.add(week);
-            }
-        }
-        return weekList;
-    }
-
-    public ObservableList<String> customerNames()
-    {
-        ObservableList<String> customerList;
-
-        customerList = DBAppointments.getAllAppointmentCustomerNames();
-
-        return customerList;
-    }
-
-    public ObservableList<String> contactNames()
-    {
-        ObservableList<String> contactList;
-
-        contactList = DBAppointments.getAllAppointmentContactNames();
-
-        return contactList;
-    }
-
-    public ObservableList<String> typeNames()
-    {
-        ObservableList<String> typeList = FXCollections.observableArrayList();
-
-        for(String type : DBAppointments.getAllAppointmentTypes())
-        {
-            if(!(typeList.contains(type)))
-            {
-                typeList.add(type);
-            }
-        }
-
-        return typeList;
-    }
-
-
-    public boolean isApptsInitialized()
-    {
-        return apptsInitialized;
-    }
-
-    public void apptsSet(boolean status)
-    {
-        if(status == true)
-        {
-            apptsInitialized = true;
-        }
-        else if(status == false)
-        {
-            apptsInitialized = false;
-        }
-    }
-
-
-    public void customerMenuHandler(ActionEvent event) throws IOException
-    {
-        // Redirect to Customers Screen
-        Parent customers = FXMLLoader.load(getClass().getResource("Customers.fxml"));
-        Scene scene = new Scene(customers);
-        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        window.setScene(scene);
-        window.show();
-    }
-
-    public void consultantsMenuHandler(ActionEvent event) throws IOException
-    {
-        // Redirect to consultants Screen
-        Parent consultants = FXMLLoader.load(getClass().getResource("Contacts.fxml"));
-        Scene scene = new Scene(consultants);
-        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        window.setScene(scene);
-        window.show();
-    }
-
-    public void addApptHandler(ActionEvent event) throws IOException
-    {
-
-        // Redirect to addAppt screen
-        Parent addAppt = FXMLLoader.load(getClass().getResource("AddAppointments.fxml"));
-        Scene scene = new Scene(addAppt);
-        Stage window = (Stage)menuBar.getScene().getWindow();
-        window.setScene(scene);
-        window.show();
-    }
-
-    public void modifyApptHandler(ActionEvent event) throws IOException
-    {
-        selectedAppt = apptsTable.getSelectionModel().getSelectedItem();
-        if(selectedAppt != null)
-        {
-            // redirect to Modify Appt Screen
-            Parent modifyAppt = FXMLLoader.load(getClass().getResource("ModifyAppointments.fxml"));
-            Scene scene = new Scene(modifyAppt);
-            Stage window = (Stage)menuBar.getScene().getWindow();
-            window.setScene(scene);
-            window.show();
-        }
-        else
-        {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Appointments");
-            alert.setHeaderText("No Appointment Selected");
-            alert.setContentText("Please select an appointment to modify");
-            alert.showAndWait();
-        }
-    }
-
-    public void removeApptHandler(ActionEvent event) throws IOException
-    {
-        Appointment appt = apptsTable.getSelectionModel().getSelectedItem();
-
-        if(appt != null)
-        {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Appointments");
-            confirm.setHeaderText("Confirm Appointment Cancellation");
-            confirm.setContentText("Are you sure you want to delete the following appointment?\n"+
-                    "Appointment " + appt.getApptID() + ": " + appt.getTitle() + " - " + appt.getType());
-            confirm.showAndWait();
-
-            if(confirm.getResult() == ButtonType.OK)
-            {
-                if(DBAppointments.removeAppt(appt))
-                {
-                    updateApptsTable();
-                    Alert alert = new Alert((Alert.AlertType.INFORMATION));
-                    alert.setTitle("Appointments");
-                    alert.setHeaderText("Cancellation Complete");
-                    alert.setContentText("Appointment " + appt.getApptID() + ": " + appt.getTitle() + " - " +
-                            appt.getType() + " is cancelled.");
-                    alert.showAndWait();
-                }
-            }
-        }
-        else
-        {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Appointments");
-            alert.setHeaderText("No Appointment Selected");
-            alert.setContentText("Please select an appointment to delete");
-            alert.showAndWait();
-        }
-
-    }
-
-    private void populateApptsTable()
-    {
-        apptID.setCellValueFactory(new PropertyValueFactory<>("ApptID"));
-        title.setCellValueFactory(new PropertyValueFactory<>("Title"));
-        description.setCellValueFactory(new PropertyValueFactory<>("Description"));
-        location.setCellValueFactory(new PropertyValueFactory<>("Location"));
-        type.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        start.setCellValueFactory(new PropertyValueFactory<>("Start"));
-        end.setCellValueFactory(new PropertyValueFactory<>("End"));
-        customerID.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
-        userID.setCellValueFactory(new PropertyValueFactory<>("UserID"));
-        contactID.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
-    }
-
-    private void updateApptsTable()
-    {
-        apptsTable.setItems(DBAppointments.getAllAppointments());
-        updateApptCtr();
-    }
-
-
-    public void resetAllFilters()
-    {
-        allTime.setSelected(true);
-        allCustomers.setSelected(true);
-        allContacts.setSelected(true);
-        allTypes.setSelected(true);
-    }
-
-    public void updateApptCtr()
-    {
-        int apptCount = 0;
-
-        for(Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
-        {
-            apptCount++;
-        }
-
-        apptCtr.setText(Integer.toString(apptCount));
-        contactsRankedByApptCt();
-        divisionsRankedByCustomerCt();
-        typesRankedByApptType();
-        contactsRankedByApptTime();
-    }
-
-    public void contactsRankedByApptCt()
-    {
-        contactName.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-
-        contactsByApptCt.setItems(DBAppointments.rankContactsByApptCount());
-        contactsByApptCt.refresh();
-    }
-
-    public void contactsRankedByApptTime()
-    {
-
-        contactApptTimeRanking.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-
-        contactsByApptTime.setItems(DBAppointments.rankContactsByApptTime());
-        contactsByApptTime.refresh();
-    }
-
-    public void divisionsRankedByCustomerCt()
-    {
-
-        divisionRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-
-        divisionsByCustomerCt.setItems(DBAppointments.rankDivisionsByCustomerCount());
-        divisionsByCustomerCt.refresh();
-    }
-
-    public void typesRankedByApptType()
-    {
-        typeRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-
-        typesByApptCt.setItems(DBAppointments.rankTypesByApptCount());
-        typesByApptCt.refresh();
-    }
-
-    public void exitProgramHandler()
-    {
-        Alert alert = new Alert((Alert.AlertType.CONFIRMATION));
-        alert.setTitle("Appointments");
-        alert.setHeaderText("Confirm Exit");
-        alert.setContentText("Are you sure you want to close the program?");
-        alert.showAndWait();
-
-        if(alert.getResult() == ButtonType.OK)
-        {
-            System.exit(0);
         }
     }
 }

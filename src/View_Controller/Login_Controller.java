@@ -29,7 +29,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-
+/** FXML Login_Controller Class: Handles the login of users, logging of login events, and error control messages in the
+ * event of failed logins. */
 public class Login_Controller implements Initializable
 {
     @FXML private TextField userName;
@@ -42,7 +43,11 @@ public class Login_Controller implements Initializable
 
     private static final TimeZone gmtTimeZone = TimeZone.getTimeZone("GMT+0");
 
-
+    /** Sets the initial conditions of the Login scene, e.g. pre-populating the Zone and detected language.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -53,6 +58,7 @@ public class Login_Controller implements Initializable
         zoneID();
     }
 
+    /** Gets the zoneID of the user's system. */
     public void zoneID()
     {
         Locale currentLocale = Locale.getDefault();
@@ -61,6 +67,11 @@ public class Login_Controller implements Initializable
         zoneID.setText(zone + "\n" + currentLocale.getDisplayLanguage());
     }
 
+    /** Handles the login of the user and error control messages for failed logins.
+     *
+     * @param event
+     * @throws Exception
+     */
     public void loginHandler(ActionEvent event) throws Exception
     {
         if(Credentials.validate(userName.getText(), userPassword.getText()))
@@ -103,6 +114,7 @@ public class Login_Controller implements Initializable
         }
     }
 
+    /** Gets the UTC equivalent for the local time, incremented by 15 minutes. Used for checking for imminent appointments. */
     public static Date getUTCDateForLocalDate()
     {
         Calendar local = Calendar.getInstance();
@@ -118,11 +130,10 @@ public class Login_Controller implements Initializable
         return utc.getTime();
     }
 
-    public void imminentApptCheck() {
-        //Get time now in UTC
-        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
-        Timestamp utcTimestamp = Timestamp.valueOf(formatter.format(getUTCDateForLocalDate()));
-
+    /** Generates a message to display whether there are any appointments occuring within 15 minutes of user's login.
+     * This is where one of two types of lambda functions in this program are used. */
+    public void imminentApptCheck()
+    {
         int numberOfAppts = DBAppointments.checkImminentAppointments();
 
         interface pluralSingular
@@ -130,6 +141,10 @@ public class Login_Controller implements Initializable
             String runCheck(String str);
         }
 
+        /** Lambda Function: lambda functions are used here as a way to simplify the various types of outputs that can
+         * happen -- depending on 1) Whether there are more than 1 imminent appointments and 2) whether the system's
+         * default display language is French or English. -- down to just a couple of variables:
+         * is_are or is_are_Fr. */
         pluralSingular plural_en = (s) -> s + " are";
         pluralSingular singular_en = (s) -> s + " is";
         pluralSingular pluralAppts_en = (s) -> s + " appointments in the next 15 minutes";
@@ -176,6 +191,7 @@ public class Login_Controller implements Initializable
         }
     }
 
+    /** Produces the list of appointments, if any, that occur within 15 minutes of user's login. */
     public String imminentAppointmentListing(ObservableList<Appointment> imminentAppts)
     {
         String imminentApptListing = "";
@@ -198,6 +214,7 @@ public class Login_Controller implements Initializable
         return imminentApptListing;
     }
 
+    /** Updates the login_activity.txt file with a description of each successful or failed login. */
     public void updateLoginActivity(Boolean bool) throws Exception
     {
         DateTimeFormatter localLoginTime = DateTimeFormatter.ofPattern("MM/yyyy/dd HH:mm:ss");
@@ -219,7 +236,5 @@ public class Login_Controller implements Initializable
                     localLoginTime.format(now) + "\r\n").getBytes());
             log.close();
         }
-
     }
-
 }

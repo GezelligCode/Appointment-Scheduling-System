@@ -20,13 +20,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static View_Controller.Customers_Controller.getSelectedCustomer;
 
+/** FXML ModifyCustomers_Controller Class: Handles the modification of a current customer. */
 public class ModifyCustomers_Controller implements Initializable
 {
     @FXML private TextField customerID;
@@ -39,7 +39,11 @@ public class ModifyCustomers_Controller implements Initializable
 
     private Customer selectedCustomer = getSelectedCustomer();
 
-
+    /** Sets the initial conditions of the Modify Appointments scene, such as prepopulating the input fields.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -58,6 +62,7 @@ public class ModifyCustomers_Controller implements Initializable
         setFields();
     }
 
+    /** Populates the division field based on the user-selected country. */
     public void countrySelectionHandler()
     {
         String countrySelected = customerCountry.getValue().toString();
@@ -73,6 +78,7 @@ public class ModifyCustomers_Controller implements Initializable
         }
     }
 
+    /** Produces the list of all countries to select from. */
     public ObservableList countryList()
     {
         ObservableList<String> countries = FXCollections.observableArrayList();
@@ -85,6 +91,7 @@ public class ModifyCustomers_Controller implements Initializable
         return countries;
     }
 
+    /** Produces the list of all divisions from the database. */
     public ObservableList divisionList()
     {
         ObservableList<String> divisions = FXCollections.observableArrayList();
@@ -97,6 +104,7 @@ public class ModifyCustomers_Controller implements Initializable
         return divisions;
     }
 
+    /** Produces the list of all divisions to select from, based on selected country. */
     public ObservableList divisionsFilteredByCountry(String country)
     {
         ObservableList<String> divisions = FXCollections.observableArrayList();
@@ -109,6 +117,7 @@ public class ModifyCustomers_Controller implements Initializable
         return divisions;
     }
 
+    /** Executes the update of the customer in the database. */
     public void saveHandler(ActionEvent event) throws IOException
     {
         try
@@ -174,6 +183,7 @@ public class ModifyCustomers_Controller implements Initializable
         }
     }
 
+    /** Redirects to the main Customers scene. */
     public void cancelHandler(ActionEvent event) throws IOException
     {
         // Switch to Customers Scene
@@ -184,18 +194,7 @@ public class ModifyCustomers_Controller implements Initializable
         window.show();
     }
 
-    public ObservableList divisions()
-    {
-        ObservableList<String> divisionList = FXCollections.observableArrayList();
-
-        for(Division div : DBDivisions.getAllDivisions())
-        {
-            divisionList.add(div.getDivision());
-        }
-
-        return divisionList;
-    }
-
+    /** Prepopulates the form's fields with the data values from the pre-selected customer to modify. */
     public void setFields()
     {
         customerID.setText(Integer.toString(selectedCustomer.getCustomerID()));

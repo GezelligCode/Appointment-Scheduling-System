@@ -2,9 +2,7 @@ package View_Controller;
 
 import DBAccess.*;
 import Model.Appointment;
-import Model.Contact;
 import Model.Customer;
-import Model.Division;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,22 +14,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import javafx.util.converter.LocalDateTimeStringConverter;
-import javafx.util.converter.LocalTimeStringConverter;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.*;
-import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
+/** FXML AddAppointments_Controller Class: Handles addition of new appointments. */
 public class AddAppointments_Controller implements Initializable
 {
     @FXML private TextField apptTitle;
@@ -50,6 +42,11 @@ public class AddAppointments_Controller implements Initializable
     @FXML private ToggleGroup am_pmStart;
     @FXML private ToggleGroup am_pmEnd;
 
+    /** Sets the initial conditions of the Add Appointments scene, such as prepopulating the comboboxes.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -68,6 +65,7 @@ public class AddAppointments_Controller implements Initializable
     private final ObservableList<String> selectableMinute = FXCollections.observableArrayList();
     private final ObservableList<String> customerList = FXCollections.observableArrayList();
 
+    /** Produces the list of all customers to select from. */
     public ObservableList customers()
     {
         for(Customer customer : DBCustomers.getAllCustomers())
@@ -78,13 +76,15 @@ public class AddAppointments_Controller implements Initializable
         return customerList;
     }
 
-    public void contactEmailHandler() throws IOException
+    /** Populates the contact e-mail field based on the user-selected contact. */
+    public void contactEmailHandler()
     {
         String contactName = apptContactName.getValue().toString();
 
         apptContactEmail.setText(DBContacts.getContactEmailByID(DBContacts.getContactIDByName(contactName)));
     }
 
+    /** Executes the addition of the appointment to the database. */
     public void saveHandler(ActionEvent event) throws IOException, ParseException, InvocationTargetException
     {
         try
@@ -134,6 +134,7 @@ public class AddAppointments_Controller implements Initializable
         }
     }
 
+    /** Returns the user to the main Appointments screen. */
     public void cancelHandler(ActionEvent event) throws IOException
     {
         // Switch to Appts Scene
@@ -144,16 +145,27 @@ public class AddAppointments_Controller implements Initializable
         window.show();
     }
 
+    /** Outputs a timestamp for the start date and time based on user input. */
     public Timestamp startTimeStamper() throws ParseException
     {
         return getTimestamp(apptStartDate, apptStartHour, apptStartMin, am_pmStart);
     }
 
+    /** Outputs a timestamp for the end date and time based on user input. */
     public Timestamp endTimeStamper() throws ParseException
     {
         return getTimestamp(apptEndDate, apptEndHour, apptEndMin, am_pmEnd);
     }
 
+    /** Parses the date and times as selected by the user.
+     *
+     * @param datePicker A DatePicker control, representing either the start date or the end date.
+     * @param hourPicker A ComboBox control, representing either the start hour or the end hour.
+     * @param minutePicker A ComboBox control, representing either the start minute or the end minute.
+     * @param am_pm A ToggleGroup control, representing AM or PM for either the start or end time.
+     * @return Returns a Timestamp object that reflects the complete date and time for the start or end time.
+     * @throws ParseException Necessary for the conversion of 12-hour format to 24-hour format.
+     */
     private Timestamp getTimestamp(DatePicker datePicker, ComboBox hourPicker, ComboBox minutePicker, ToggleGroup am_pm) throws ParseException
     {
         String date = datePicker.getValue().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
@@ -175,6 +187,10 @@ public class AddAppointments_Controller implements Initializable
         return Timestamp.valueOf(concatTimeStamp);
     }
 
+    /** Creates an array of numbers, representing hours of the clock.
+     *
+     * @return Returns an array of integer type, holding all hours in 12-hour format.
+     */
     public ObservableList apptHour()
     {
         int[] hours = new int[]{12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
@@ -190,6 +206,10 @@ public class AddAppointments_Controller implements Initializable
         return selectableHour;
     }
 
+    /** Creates an array of numbers in String form, representing minutes in intervals of 5 minutes.
+     *
+     * @return Returns an array of String type, holding minutes at intervals of 5 minutes from 00 to 55.
+     */
     public ObservableList apptMin()
     {
         String[] mins = new String[]{"00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"};
@@ -204,118 +224,4 @@ public class AddAppointments_Controller implements Initializable
 
         return selectableMinute;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public SpinnerValueFactory hourGenerator()
-    {
-        String hourPattern = "HH";
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(hourPattern);
-
-        SpinnerValueFactory time = new SpinnerValueFactory()
-        {
-            @Override
-            public void decrement(int step)
-            {
-                if(getValue() == null)
-                {
-                    setValue(LocalTime.now());
-                }
-                else
-                {
-                    LocalTime apptStartTime = (LocalTime) getValue();
-                    setValue(apptStartTime.minusHours(step).format(formatter));
-                }
-            }
-
-            @Override
-            public void increment(int step)
-            {
-                if(this.getValue() == null)
-                {
-                    setValue(LocalTime.now());
-                }
-                else
-                {
-                    LocalTime apptStartTime = (LocalTime) getValue();
-                    setValue(apptStartTime.plusHours(step).format(formatter));
-                }
-            }
-        };
-
-        return time;
-    }
-
-    public SpinnerValueFactory minGenerator()
-    {
-        String minPattern = "mm";
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(minPattern);
-
-        SpinnerValueFactory time = new SpinnerValueFactory()
-        {
-            @Override
-            public void decrement(int step)
-            {
-                if(getValue() == null)
-                {
-                    setValue(LocalTime.NOON.format(formatter));
-                }
-                else
-                {
-                    LocalTime apptStartTime = (LocalTime) getValue();
-                    //apptStartTime = apptStartTime.format(formatter);
-                    setValue(apptStartTime.minusMinutes(step));
-                }
-            }
-
-            @Override
-            public void increment(int step)
-            {
-                if(this.getValue() == null)
-                {
-                    setValue(LocalTime.NOON.format(formatter));
-                }
-                else
-                {
-                    LocalTime apptStartTime = (LocalTime) getValue();
-                    setValue(apptStartTime.plusMinutes(step).format(formatter));
-                }
-            }
-        };
-
-        return time;
-
-    }
-
 }

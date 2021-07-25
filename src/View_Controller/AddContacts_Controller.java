@@ -1,15 +1,7 @@
 package View_Controller;
 
 import DBAccess.DBContacts;
-import DBAccess.DBCustomers;
-import DBAccess.DBDivisions;
-import DBAccess.DBUsers;
 import Model.Contact;
-import Model.Customer;
-import Model.Division;
-import Model.User;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,20 +10,24 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/** FXML AddContacts_Controller Class: Handles the addition of new contacts. */
 public class AddContacts_Controller implements Initializable
 {
     @FXML private TextField contactID;
     @FXML private TextField contactName;
     @FXML private TextField contactEmail;
 
+    /** Sets the initial conditions of the Add Contacts scene.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -39,7 +35,7 @@ public class AddContacts_Controller implements Initializable
         contactID.setText("Auto-generated");
     }
 
-
+    /** Executes the addition of the contact to the database. */
     public void saveHandler(ActionEvent event) throws IOException
     {
         String name = contactName.getText();
@@ -47,11 +43,8 @@ public class AddContacts_Controller implements Initializable
 
         if(Contact.validateContact(name, email))
         {
-            //Use the DBCustomers class to interface with the DB, in this case to add the customer
-            // First create a customer instance
             Contact addedContact = new Contact(name, email);
 
-            //DBCustomers Method
             DBContacts.addContact(addedContact);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -69,6 +62,7 @@ public class AddContacts_Controller implements Initializable
         }
     }
 
+    /** Returns the user to the main Contacts screen. */
     public void cancelHandler(ActionEvent event) throws IOException
     {
 
@@ -79,8 +73,4 @@ public class AddContacts_Controller implements Initializable
         window.setScene(scene);
         window.show();
     }
-
-
-
-
 }

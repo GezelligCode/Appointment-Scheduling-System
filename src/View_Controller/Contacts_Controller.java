@@ -2,10 +2,8 @@ package View_Controller;
 
 import DBAccess.DBAppointments;
 import DBAccess.DBContacts;
-import DBAccess.DBCustomers;
 import Model.Appointment;
 import Model.Contact;
-import Model.Customer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,19 +15,20 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/** FXML Contacts_Controller Class: Handles the main contacts screen and display of all contacts and their associated
+ * appointments. Also redirects to Add or Modify Contacts scene. Deletion of contacts is handled directly.
+ */
 public class Contacts_Controller implements Initializable
 {
     @FXML private TableView<Contact> contactsTable;
     @FXML private TableColumn<Contact, Integer> contactID;
     @FXML private TableColumn<Contact, String> contactName;
     @FXML private TableColumn<Contact, String> contactEmail;
-    //@FXML private TableColumn<Country, String> customerCountry;
     @FXML private TableView<Appointment> assocApptsTable;
     @FXML private TableColumn<Appointment, Integer> apptID;
     @FXML private TableColumn<Appointment, String> title;
@@ -41,16 +40,21 @@ public class Contacts_Controller implements Initializable
     @FXML private TableColumn<Appointment, Integer> assocCustomerID;
     @FXML private TableColumn<Appointment, Integer> userID;
     @FXML private TableColumn<Appointment, Integer> assocContactID;
-
     @FXML private MenuButton menuBar;
 
     private static Contact selectedContact = null;
 
+    /** Public getter for the private selectedContact variable for the ModifyContacts_Controller to use. */
     public static Contact getSelectedContact()
     {
         return selectedContact;
     }
 
+    /** Sets the initial conditions of the Contacts scene, e.g. pre-populating the table views.
+     *
+     * @param url Resolves the relative file path of the root object.
+     * @param resourceBundle Localizes the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -59,6 +63,7 @@ public class Contacts_Controller implements Initializable
         populateApptsTable();
     }
 
+    /** Redirects to the Add Contact scene. */
     public void addContactHandler(ActionEvent event) throws IOException
     {
 
@@ -70,6 +75,7 @@ public class Contacts_Controller implements Initializable
         window.show();
     }
 
+    /** Redirects to the Modify Contact scene. */
     public void modifyContactHandler(ActionEvent event) throws IOException
     {
         selectedContact = contactsTable.getSelectionModel().getSelectedItem();
@@ -92,7 +98,8 @@ public class Contacts_Controller implements Initializable
         }
     }
 
-    public void deleteContactHandler(ActionEvent event) throws IOException
+    /** Executes the removal of a contact from the database. */
+    public void deleteContactHandler()
     {
         Contact contact = contactsTable.getSelectionModel().getSelectedItem();
 
@@ -143,6 +150,7 @@ public class Contacts_Controller implements Initializable
         }
     }
 
+    /** Redirects to the main Appointments screen. */
     public void cancelHandler(ActionEvent event) throws IOException
     {
 
@@ -154,6 +162,7 @@ public class Contacts_Controller implements Initializable
         window.show();
     }
 
+    /** Maps the Contact fields to the table view columns. */
     private void populateContacts()
     {
         contactID.setCellValueFactory(new PropertyValueFactory<>("contactID"));
@@ -161,11 +170,13 @@ public class Contacts_Controller implements Initializable
         contactEmail.setCellValueFactory(new PropertyValueFactory<>("contactEmail"));
     }
 
+    /** Updates the Contacts table view with all contacts. */
     private void updateContactsTable()
     {
         contactsTable.setItems(DBContacts.getAllContacts());
     }
 
+    /** Maps the Appointment fields to the Associated Appointments table view columns. */
     private void populateApptsTable()
     {
         apptID.setCellValueFactory(new PropertyValueFactory<>("ApptID"));
@@ -180,7 +191,8 @@ public class Contacts_Controller implements Initializable
         assocContactID.setCellValueFactory(new PropertyValueFactory<>("ContactID"));
     }
 
-    public void updateAssociatedApptsTable(MouseEvent event) throws IOException
+    /** Updates the Associated Appointments table with the appointments associated with a contact selected by the user. */
+    public void updateAssociatedApptsTable(MouseEvent event)
     {
         if(event.getSource() == contactsTable)
         {
@@ -203,6 +215,4 @@ public class Contacts_Controller implements Initializable
             System.out.println("No event found");
         }
     }
-
-
 }
