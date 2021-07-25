@@ -116,6 +116,7 @@ public class Customer
         return customerDivisionID;
     }
 
+    /** Gets customer ID from a customer name, where the name given is from a String object that contains the ID. */
     public static int getCustomerIDByName(String customerName)
     {
         int customerID = Integer.parseInt(customerName.substring(0, customerName.indexOf(":")));

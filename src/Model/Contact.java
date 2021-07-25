@@ -56,6 +56,7 @@ public class Contact
         this.eMail = eMail;
     }
 
+    /** Gets contact ID from a contact name, where the name given is from a String object that contains the ID. */
     public static int getContactIDByName(String contactName)
     {
         int contactID = Integer.parseInt(contactName.substring(0, contactName.indexOf(":")));
