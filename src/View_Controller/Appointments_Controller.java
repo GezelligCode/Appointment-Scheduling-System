@@ -297,37 +297,48 @@ public class Appointments_Controller implements Initializable
         contactsRankedByApptTime();
     }
 
-    /** Updates the contactsRankedByApptCt table view to show all contacts ranked by their appointment count. */
+    /** Updates the contactsRankedByApptCt table view to show all contacts ranked by their appointment count.
+     * Lambda function is used here.
+     */
     public void contactsRankedByApptCt()
     {
+        /** Lambda function:  Enables an efficient way for table cell to take any data and convert to string. */
         contactName.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
         contactsByApptCt.setItems(DBAppointments.rankContactsByApptCount());
         contactsByApptCt.refresh();
     }
 
-    /** Updates the contactsRankedByApptTime table view to show all contacts ranked by their total appointment time. */
+    /** Updates the contactsRankedByApptTime table view to show all contacts ranked by their total appointment time.
+     * Lambda function is used here.
+     */
     public void contactsRankedByApptTime()
     {
+        /** Lambda function:  Enables an efficient way for table cell to take any data and convert to string. */
         contactApptTimeRanking.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
         contactsByApptTime.setItems(DBAppointments.rankContactsByApptTime());
         contactsByApptTime.refresh();
     }
 
-    /** Updates the divisionsRankedByCustomerCt table view to show all divisions ranked by their customer count. */
+    /** Updates the divisionsRankedByCustomerCt table view to show all divisions ranked by their customer count.
+     * Lambda function is used here.
+     */
     public void divisionsRankedByCustomerCt()
     {
-
+        /** Lambda function:  Enables an efficient way for table cell to take any data and convert to string. */
         divisionRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
         divisionsByCustomerCt.setItems(DBAppointments.rankDivisionsByCustomerCount());
         divisionsByCustomerCt.refresh();
     }
 
-    /** Updates the typesRankedByApptType table view to show all types ranked by their appointment count. */
+    /** Updates the typesRankedByApptType table view to show all types ranked by their appointment count.
+     * Lambda function is used here.
+     */
     public void typesRankedByApptType()
     {
+        /** Lambda function:  Enables an efficient way for table cell to take any data and convert to string. */
         typeRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
         typesByApptCt.setItems(DBAppointments.rankTypesByApptCount());
