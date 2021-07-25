@@ -7,20 +7,23 @@ import Model.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
 
+/** DB Appointments Class*/
 public class DBAppointments
 {
     private static ObservableList<Appointment> imminentAppointments = FXCollections.observableArrayList();
 
+    /** Gets all appointments from the database.
+     *
+     * @return Returns an ObservableList of all Appointments.
+     */
     public static ObservableList<Appointment> getAllAppointments()
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -58,7 +61,11 @@ public class DBAppointments
         return appointmentList;
     }
 
-    public static ObservableList<Timestamp> getAllAppointmentMonths()
+    /** Gets all appointment timestamps from all appointments.
+     *
+     * @return returns an ObservableList of Timestamp type from each appointment, without duplicates.
+     */
+    public static ObservableList<Timestamp> getAllAppointmentTimestamps()
     {
         ObservableList<Timestamp> appointmentMonthList = FXCollections.observableArrayList();
 
@@ -84,6 +91,10 @@ public class DBAppointments
         return appointmentMonthList;
     }
 
+    /** Gets all weeks from all appointments.
+     *
+     * @return Returns an ObservableList of String type reflecting the week for each appointment.
+     */
     public static ObservableList<String> getAllAppointmentWeeks()
     {
         ObservableList<String> appointmentWeekList = FXCollections.observableArrayList();
@@ -113,6 +124,10 @@ public class DBAppointments
         return appointmentWeekList;
     }
 
+    /** Gets all contact IDs from all appointments.
+     *
+     * @return Returns an ObservableList of Integer type reflecting all contact IDs from all appointments.
+     */
     public static ObservableList<Integer> getAllAppointmentContactIDs()
     {
         ObservableList<Integer> appointmentContactIDList = FXCollections.observableArrayList();
@@ -139,6 +154,10 @@ public class DBAppointments
         return appointmentContactIDList;
     }
 
+    /** Gets all contact names from all appointments.
+     *
+     * @return Returns an ObservableList of String type reflecting all contact names from all appointments.
+     */
     public static ObservableList<String> getAllAppointmentContactNames()
     {
         ObservableList<String> appointmentContactNames = FXCollections.observableArrayList();
@@ -168,6 +187,10 @@ public class DBAppointments
         return appointmentContactNames;
     }
 
+    /** Gets all customer IDs from all appointments.
+     *
+     * @return returns an ObservableList of Integer type that reflects all customer IDs from all appointments.
+     */
     public static ObservableList<Integer> getAllAppointmentCustomerIDs()
     {
         ObservableList<Integer> appointmentCustomerIDList = FXCollections.observableArrayList();
@@ -194,6 +217,10 @@ public class DBAppointments
         return appointmentCustomerIDList;
     }
 
+    /** Gets all customer names from all appointments
+     *
+     * @return Returns an ObservableList of String type reflecting all customer names from all appointments.
+     */
     public static ObservableList<String> getAllAppointmentCustomerNames()
     {
         ObservableList<String> appointmentCustomerNames = FXCollections.observableArrayList();
@@ -223,6 +250,10 @@ public class DBAppointments
         return appointmentCustomerNames;
     }
 
+    /** Gets all types from all appointments.
+     *
+     * @return Returns an ObservableList of String type reflecting all types from all appointments.
+     */
     public static ObservableList<String> getAllAppointmentTypes()
     {
         ObservableList<String> appointmentTypes = FXCollections.observableArrayList();
@@ -252,6 +283,11 @@ public class DBAppointments
         return appointmentTypes;
     }
 
+    /** Gets all appointments filtered by a selected customer.
+     *
+     * @param customer A string value selected from the Customer filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected customer.
+     */
     public static ObservableList<Appointment> filterApptsViewByCustomer(String customer)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -292,6 +328,11 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected contact.
+     *
+     * @param contact A string value selected from the Consultant filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected contact.
+     */
     public static ObservableList<Appointment> filterApptsViewByContact(String contact)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -332,6 +373,11 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected type.
+     *
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected type.
+     */
     public static ObservableList<Appointment> filterApptsViewByType(String typeName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -373,6 +419,13 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected customer, contact, and type.
+     *
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByCustomerContactType(String customerName, String contactName,
                                                                                    String typeName)
     {
@@ -418,6 +471,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected customer and type.
+     *
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByCustomerAndType(String customerName, String typeName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -460,6 +519,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected contact and type.
+     *
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the input filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByContactAndType(String contactName, String typeName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -502,6 +567,13 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected month, customer, and type.
+     *
+     * @param month A string value selected from the Month filter in the main Appointments screen.
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByMonthCustomerType(String month, String customerName,
                                                                                  String typeName)
     {
@@ -548,6 +620,13 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected month, contact, and type.
+     *
+     * @param month A string value selected from the Month filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByMonthContactType(String month, String contactName, String typeName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -593,6 +672,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected month and type.
+     *
+     * @param month A string value selected from the Month filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByMonthAndType(String month, String typeName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -635,6 +720,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected week and type.
+     *
+     * @param week A string value selected from the Week filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByWeekAndType(String week, String typeName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -678,6 +769,13 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected week, customer, and type.
+     *
+     * @param week A string value selected from the Week filter in the main Appointments screen.
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByWeekCustomerType(String week, String customerName,
                                                                                 String typeName)
     {
@@ -725,6 +823,13 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected week, contact, and type.
+     *
+     * @param week A string value selected from the Week filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByWeekContactType(String week, String contactName, String typeName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -771,6 +876,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected customer and contact.
+     *
+     * @param customer A string value selected from the Customer filter in the main Appointments screen.
+     * @param contact A string value selected from the Contact filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByCustomerAndContact(String customer, String contact)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -812,6 +923,14 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected month, customer, contact, and type.
+     *
+     * @param month A string value selected from the Month filter in the main Appointments screen.
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByMonthCustomerContactType(String month, String customerName,
                                                                                     String contactName, String typeName)
     {
@@ -860,6 +979,13 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected month, customer, and contact.
+     *
+     * @param month A string value selected from the Month filter in the main Appointments screen.
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByMonthCustomerContact(String month, String customerName,
                                                                                     String contactName)
     {
@@ -903,6 +1029,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected month and customer.
+     *
+     * @param month A string value selected from the Month filter in the main Appointments screen.
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByMonthAndCustomer(String month, String customerName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -944,6 +1076,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected month and contact.
+     *
+     * @param month A string value selected from the Month filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByMonthAndContact(String month, String contactName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -985,6 +1123,11 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected month.
+     *
+     * @param month A string value selected from the Month filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected month.
+     */
     public static ObservableList<Appointment> filterApptsViewByMonth(String month)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -1025,6 +1168,11 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected week.
+     *
+     * @param week A string value selected from the Week filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected week.
+     */
     public static ObservableList<Appointment> filterApptsViewByWeek(String week)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -1068,6 +1216,14 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected week, customer, contact, and type.
+     *
+     * @param week A string value selected from the Week filter in the main Appointments screen.
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @param typeName A string value selected from the Type filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByWeekCustomerContactType(String week, String customerName,
                                                                                    String contactName, String typeName)
     {
@@ -1115,6 +1271,13 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected week, customer, and contact.
+     *
+     * @param week A string value selected from the Week filter in the main Appointments screen.
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByWeekCustomerContact(String week, String customerName,
                                                                                    String contactName)
     {
@@ -1161,6 +1324,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected week and customer.
+     *
+     * @param week A string value selected from the Week filter in the main Appointments screen.
+     * @param customerName A string value selected from the Customer filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByWeekAndCustomer(String week, String customerName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -1205,6 +1374,12 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments filtered by a selected week and contact.
+     *
+     * @param week A string value selected from the Week filter in the main Appointments screen.
+     * @param contactName A string value selected from the Contact filter in the main Appointments screen.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the selected filters.
+     */
     public static ObservableList<Appointment> filterApptsViewByWeekAndContact(String week, String contactName)
     {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
@@ -1249,6 +1424,11 @@ public class DBAppointments
         return appointmentList;
     }
 
+    /** Gets all appointments for a given customer.
+     *
+     * @param customer A Customer object passed by the calling function.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the given customer.
+     */
     public static ObservableList<Appointment> getAllAppointmentsByCustomerID(Customer customer)
     {
         ObservableList<Appointment> associatedApptsList = FXCollections.observableArrayList();
@@ -1290,6 +1470,11 @@ public class DBAppointments
         return associatedApptsList;
     }
 
+    /** Gets all appointments for a given contact.
+     *
+     * @param contact A Contact object passed by the calling function.
+     * @return Returns an ObservableList of Appointment type that reflects all appointments for the given contact.
+     */
     public static ObservableList<Appointment> getAllAppointmentsByContactID(Contact contact)
     {
         ObservableList<Appointment> associatedApptsList = FXCollections.observableArrayList();
@@ -1331,6 +1516,12 @@ public class DBAppointments
         return associatedApptsList;
     }
 
+    /** Adds a new appointment to the database.
+     *
+     * @param appt An appointment object instantiated from the AddAppointments_Controller.
+     * @param tsStart A timestamp object reflecting the appointment's start time, collected from the user-input date and time fields.
+     * @param tsEnd A timestamp object reflecting the appointment's end time, collected from the user-input date and time fields.
+     */
     public static void addAppointment(Appointment appt, Timestamp tsStart, Timestamp tsEnd)
     {
         int apptID = 0;
@@ -1374,6 +1565,10 @@ public class DBAppointments
 
     }
 
+    /** Updates an appointment in the database.
+     *
+     * @param appt An appointment object instantiated from the ModifyAppointments_Controller.
+     */
     public static boolean updateAppt(Appointment appt)
     {
         int apptID = appt.getApptID();
@@ -1421,6 +1616,10 @@ public class DBAppointments
         }
     }
 
+    /** Removes an appointment from the database.
+     *
+     * @param appt An appointment object instantiated from the Appointments_Controller.
+     */
     public static boolean removeAppt(Appointment appt)
     {
         int apptID = appt.getApptID();
@@ -1446,6 +1645,11 @@ public class DBAppointments
         }
     }
 
+    /** Checks for and counts all appointments whose start time occurs within the next 15 minutes of user's login.
+     * In addition, any appointments counted will also be added to the 'imminentAppointments' ObservableList.
+     *
+     * @return Returns an integer value corresponding to the count of appointments beginning within 15 minutes of user's login.
+     */
     public static int checkImminentAppointments()
     {
         int apptCounter = 0;
@@ -1475,11 +1679,20 @@ public class DBAppointments
         return apptCounter;
     }
 
-    public static ObservableList getImminentAppts()
+    /** Gets the list of all appointments occuring within 15 minutes of user's login.
+     *
+     * @return Returns an ObservableList of Appointment type, reflecting all appointments occuring within 15 minutes of user's login.
+     */
+    public static ObservableList<Appointment> getImminentAppts()
     {
         return imminentAppointments;
     }
 
+    /** Checks whether an added or modified appointment's timeframe conflicts with office hours in EST.
+     *
+     * @param appt An appointment object instantiated from either the AddAppointments_Controller or ModifyAppointments_Controller.
+     * @return Returns true if an added or modified appointment's timeframe does not occur outside of 8am to 10pm EST; else returns false.
+     */
     public static boolean validateBusinessHours(Appointment appt)
     {
         ZoneId currentZoneId = ZoneId.systemDefault();
@@ -1528,12 +1741,16 @@ public class DBAppointments
         }
     }
 
+    /** Checks whether an added or modified appointment's timeframe conflicts with an appointment also belonging to either the contact or customer.
+     *
+     * @param appt An appointment object instantiated from either the AddAppointments_Controller or ModifyAppointments_Controller.
+     * @return Returns true if an added or modified appointment's timeframe conflicts with a pre-existing appointment for the same contact or customer.
+     */
     public static boolean validateApptOverlap(Appointment appt)
     {
         String overlappingAppts = new String();
 
         boolean apptsOverlap = false;
-
 
         for(Appointment a : DBAppointments.getAllAppointments())
         {
@@ -1605,7 +1822,11 @@ public class DBAppointments
         }
     }
 
-    public static ObservableList<String> rankContactsByApptCount(ObservableList<Appointment> filteredAppts)
+    /** Gets the list of all contacts ranked by their appointment counts
+     *
+     * @return Returns an ObservableList of String type reflecting all contacts, ordered by their appointment counts.
+     */
+    public static ObservableList<String> rankContactsByApptCount()
     {
         String contactWithCountofAppts = "";
         ObservableList<String> contactsRankedByApptCount = FXCollections.observableArrayList();
@@ -1633,7 +1854,11 @@ public class DBAppointments
         return contactsRankedByApptCount;
     }
 
-    public static ObservableList<String> rankContactsByApptTime(ObservableList<Appointment> filteredAppts)
+    /** Gets the list of all contacts ranked by total appointment time
+     *
+     * @return Returns an ObservableList of String type reflecting all contacts, ordered by their total appointment time.
+     */
+    public static ObservableList<String> rankContactsByApptTime()
     {
         String contactsRanked = "";
         ObservableList<String> contactsRankedByTime = FXCollections.observableArrayList();
@@ -1664,7 +1889,11 @@ public class DBAppointments
         return contactsRankedByTime;
     }
 
-    public static ObservableList<String> rankDivisionsByCustomerCount(ObservableList<Appointment> filteredAppts)
+    /** Gets the list of all divisions ranked by customer count
+     *
+     * @return Returns an ObservableList of String type reflecting all contacts, ordered by their total customer counts.
+     */
+    public static ObservableList<String> rankDivisionsByCustomerCount()
     {
         String divisionsRanked = "";
         ObservableList<String> divisionsRankedByCustomerCount = FXCollections.observableArrayList();
@@ -1693,7 +1922,11 @@ public class DBAppointments
         return divisionsRankedByCustomerCount;
     }
 
-    public static ObservableList<String> rankTypesByApptCount(ObservableList<Appointment> filteredAppts)
+    /** Gets the list of all types ranked by appointment count
+     *
+     * @return Returns an ObservableList of String type reflecting all types, ordered by their appointment count.
+     */
+    public static ObservableList<String> rankTypesByApptCount()
     {
         String typesRanked = "";
         ObservableList<String> typesRankedByCustomerCount = FXCollections.observableArrayList();

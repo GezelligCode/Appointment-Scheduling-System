@@ -1,9 +1,13 @@
 package Database;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/** DBConnection Class*/
 public class DBConnection
 {
     // JDBC URL parse
@@ -27,6 +31,10 @@ public class DBConnection
     // Password
     private static final String password = "53689194407";
 
+    /** Establishes a connection with the database.
+     *
+     * @return Returns a Connection object that will be either null or a valid Database Connection.
+     */
     public static Connection startConnection()
     {
         try
@@ -37,23 +45,43 @@ public class DBConnection
         }
         catch(ClassNotFoundException e)
         {
-            //System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
+        }
+        catch(CommunicationsException ce)
+        {
+            ce.printStackTrace();
+
+            Alert alert = new Alert((Alert.AlertType.CONFIRMATION));
+            alert.setTitle("Database Connection");
+            alert.setHeaderText("Connection Timed Out");
+            alert.setContentText("The database connection has timed out due to idle activity.\n"+
+                    "To resume the program, please exit and log back in.");
+            alert.showAndWait();
+
+            if(alert.getResult() == ButtonType.OK)
+            {
+                System.exit(0);
+            }
         }
         catch(SQLException e)
         {
-            //System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
 
         return conn;
     }
 
+    /** A getter for the current connection object
+     *
+     * @return Returns the current connection and by extension its current state, i.e. null or valid.
+     */
     public static Connection getConnection()
     {
         return conn;
     }
 
+    /** Closes the database connection after the program closes.
+     */
     public static void closedConnection()
     {
         try

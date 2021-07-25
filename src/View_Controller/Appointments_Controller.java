@@ -1055,7 +1055,7 @@ public class Appointments_Controller implements Initializable
     {
         ObservableList<String> monthList = FXCollections.observableArrayList();
 
-        for(Timestamp ts : DBAppointments.getAllAppointmentMonths())
+        for(Timestamp ts : DBAppointments.getAllAppointmentTimestamps())
         {
             if(!(monthList.contains(ts.toLocalDateTime().getMonth().toString())))
             {
@@ -1269,61 +1269,49 @@ public class Appointments_Controller implements Initializable
 
     public void contactsRankedByApptCt()
     {
-        ObservableList<Appointment> apptsFilteredByContact = FXCollections.observableArrayList();
-
-        for (Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
-        {
-            apptsFilteredByContact.add(appt);
-        }
-
         contactName.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
-        contactsByApptCt.setItems(DBAppointments.rankContactsByApptCount(apptsFilteredByContact));
+        contactsByApptCt.setItems(DBAppointments.rankContactsByApptCount());
         contactsByApptCt.refresh();
     }
 
     public void contactsRankedByApptTime()
     {
-        ObservableList<Appointment> apptsFilteredByContact = FXCollections.observableArrayList();
-
-        for (Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
-        {
-            apptsFilteredByContact.add(appt);
-        }
 
         contactApptTimeRanking.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
-        contactsByApptTime.setItems(DBAppointments.rankContactsByApptTime(apptsFilteredByContact));
+        contactsByApptTime.setItems(DBAppointments.rankContactsByApptTime());
         contactsByApptTime.refresh();
     }
 
     public void divisionsRankedByCustomerCt()
     {
-        ObservableList<Appointment> apptsFilteredByContact = FXCollections.observableArrayList();
-
-        for (Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
-        {
-            apptsFilteredByContact.add(appt);
-        }
 
         divisionRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
-        divisionsByCustomerCt.setItems(DBAppointments.rankDivisionsByCustomerCount(apptsFilteredByContact));
+        divisionsByCustomerCt.setItems(DBAppointments.rankDivisionsByCustomerCount());
         divisionsByCustomerCt.refresh();
     }
 
     public void typesRankedByApptType()
     {
-        ObservableList<Appointment> apptsFilteredByContact = FXCollections.observableArrayList();
-
-        for (Appointment appt : apptsTable.getSelectionModel().getTableView().getItems())
-        {
-            apptsFilteredByContact.add(appt);
-        }
-
         typeRankings.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
 
-        typesByApptCt.setItems(DBAppointments.rankTypesByApptCount(apptsFilteredByContact));
+        typesByApptCt.setItems(DBAppointments.rankTypesByApptCount());
         typesByApptCt.refresh();
+    }
+
+    public void exitProgramHandler()
+    {
+        Alert alert = new Alert((Alert.AlertType.CONFIRMATION));
+        alert.setTitle("Appointments");
+        alert.setHeaderText("Confirm Exit");
+        alert.setContentText("Are you sure you want to close the program?");
+        alert.showAndWait();
+
+        if(alert.getResult() == ButtonType.OK)
+        {
+            System.exit(0);
+        }
     }
 }

@@ -24,7 +24,7 @@
             <TableColumn fx:id="contactID" prefWidth="97.39996337890625" text="Contact_ID" />
         </columns>
       </TableView>
-      <Button layoutX="22.0" layoutY="71.0" mnemonicParsing="false" onAction="#customerMenuHandler" text="Customers" />
+      <Button layoutX="21.0" layoutY="71.0" mnemonicParsing="false" onAction="#customerMenuHandler" text="Customers" />
       <Button layoutX="112.0" layoutY="71.0" mnemonicParsing="false" onAction="#consultantsMenuHandler" text="Consultants" />
       <MenuButton fx:id="menuBar" layoutX="36.0" layoutY="347.0" mnemonicParsing="false" text="Edit Appointments">
         <items>
@@ -102,5 +102,6 @@
             <TableColumn fx:id="typeRankings" prefWidth="227.20001220703125" text="Types by Appt. Count" />
          </columns>
       </TableView>
+      <Button layoutX="1030.0" layoutY="71.0" mnemonicParsing="false" onAction="#exitProgramHandler" text="Exit" />
    </children>
 </AnchorPane>
