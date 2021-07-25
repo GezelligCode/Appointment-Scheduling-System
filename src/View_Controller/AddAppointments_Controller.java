@@ -155,7 +155,7 @@ public class AddAppointments_Controller implements Initializable
     /** Outputs a timestamp for the end date and time based on user input. */
     public Timestamp endTimeStamper() throws ParseException
     {
-        return getTimestamp(apptEndDate, apptEndHour, apptEndMin, am_pmEnd);
+        return getTimestamp(apptStartDate, apptEndHour, apptEndMin, am_pmEnd);
     }
 
     /** Parses the date and times as selected by the user.

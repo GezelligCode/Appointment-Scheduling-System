@@ -40,7 +40,6 @@ public class ModifyAppointments_Controller implements Initializable
     @FXML private DatePicker apptStartDate;
     @FXML private ComboBox apptStartHour;
     @FXML private ComboBox apptStartMin;
-    @FXML private DatePicker apptEndDate;
     @FXML private ComboBox apptEndHour;
     @FXML private ComboBox apptEndMin;
     @FXML private ComboBox apptContactName;
@@ -177,7 +176,7 @@ public class ModifyAppointments_Controller implements Initializable
     /** Outputs a timestamp for the end date and time based on user input. */
     public Timestamp endTimeStamper() throws ParseException
     {
-        return getTimestamp(apptEndDate, apptEndHour, apptEndMin, am_pmEnd);
+        return getTimestamp(apptStartDate, apptEndHour, apptEndMin, am_pmEnd);
     }
 
     /** Parses the date and times as selected by the user.
@@ -220,7 +219,6 @@ public class ModifyAppointments_Controller implements Initializable
         apptLocation.setText(appt.getLocation());
         apptType.setText(appt.getType());
         apptStartDate.setValue(appt.getStart().toLocalDateTime().toLocalDate());
-        apptEndDate.setValue(appt.getEnd().toLocalDateTime().toLocalDate());
 
         // Use this as the input to the converter function
         Timestamp tStart = appt.getStart();

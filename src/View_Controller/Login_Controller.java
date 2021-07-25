@@ -147,9 +147,9 @@ public class Login_Controller implements Initializable
          * is_are or is_are_Fr. */
         pluralSingular plural_en = (s) -> s + " are";
         pluralSingular singular_en = (s) -> s + " is";
-        pluralSingular pluralAppts_en = (s) -> s + " appointments in the next 15 minutes";
+        pluralSingular pluralAppts_en = (s) -> s + " appointments in the next 15 minutes.";
         pluralSingular pluralAppts_fr = (s) -> s + " rendez-vous dans les 15 prochaines minutes.";
-        pluralSingular singularAppt_en = (s) -> s + " appointment in the next 15 minutes";
+        pluralSingular singularAppt_en = (s) -> s + " appointment in the next 15 minutes.";
         pluralSingular plural_fr = (s) -> s + " Là sont";
         pluralSingular singular_fr = (s) -> s + " Là est";
 
