@@ -2,7 +2,7 @@ WGU Appointments System
 The purpose of this application is to create appointments between Customers and Contacts (called 'Consultants' on the
 front-end, for the end-users). The application is run by a third party, collectively referred to as Users. Users are
 able to create, modify, and remove appointments, customers, and contacts. In addition, the application is
-internationalized to accomodate for all main office locations: USA, Canada, and England. To accomodate for
+internationalized to accommodate for all main office locations: USA, Canada, and England. To accommodate for
 French-speaking users in regions of Canada, the application also translates the login page to French if the default
 locale indicates that the display language is French.
 
@@ -12,7 +12,7 @@ Student Application Version: 1.0
 Date: 7.24.2021
 
 IDE Version: IntelliJ IDEA 2021.1.2 (Ultimate Edition)
-JDK Version: 14.0.2
+JDK Version: 16.0.01 (OpenJDK)
 JavaFX Version: 11.0.2+1
 MySQL Connector Driver Version: 8.0.222
 

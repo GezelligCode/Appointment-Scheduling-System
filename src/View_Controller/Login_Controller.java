@@ -41,6 +41,12 @@ public class Login_Controller implements Initializable
     @FXML private Label loginUserName;
     @FXML private Label loginPassword;
 
+    /** Interface for lambda expressions used in checking for imminent appointments upon login. */
+    interface pluralSingular
+    {
+        String runCheck(String str);
+    }
+
     private static final TimeZone gmtTimeZone = TimeZone.getTimeZone("GMT+0");
 
     /** Sets the initial conditions of the Login scene, e.g. pre-populating the Zone and detected language.
@@ -135,11 +141,6 @@ public class Login_Controller implements Initializable
     public void imminentApptCheck()
     {
         int numberOfAppts = DBAppointments.checkImminentAppointments();
-
-        interface pluralSingular
-        {
-            String runCheck(String str);
-        }
 
         /** Lambda Function: lambda functions are used here as a way to simplify the various types of outputs that can
          * happen -- depending on 1) Whether there are more than 1 imminent appointments and 2) whether the system's
