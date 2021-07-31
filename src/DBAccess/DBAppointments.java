@@ -10,6 +10,7 @@ import javafx.scene.control.Alert;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -1656,8 +1657,7 @@ public class DBAppointments
 
         try
         {
-            String sql = "SELECT Appointment_ID, date(start), time(start) FROM appointments WHERE Start >= UTC_TIME() " +
-                    "AND Start <= date_add(UTC_TIMESTAMP(), INTERVAL 15 minute)";
+            String sql = "SELECT Appointment_ID, Start, date(start), time(start) FROM appointments WHERE Start >= UTC_TIME()";
 
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
 
@@ -1665,10 +1665,13 @@ public class DBAppointments
 
             while(rs.next())
             {
-                Appointment imminentAppointment = new Appointment(rs.getInt("Appointment_ID"),
-                        rs.getDate("date(start)"), rs.getTime("time(start)"));
-                apptCounter++;
-                imminentAppointments.add(imminentAppointment);
+                if(rs.getTimestamp("Start").before(Timestamp.valueOf(LocalDateTime.now().plusMinutes(15))))
+                {
+                    Appointment imminentAppointment = new Appointment(rs.getInt("Appointment_ID"),
+                            rs.getDate("date(start)"), rs.getTime("time(start)"));
+                    apptCounter++;
+                    imminentAppointments.add(imminentAppointment);
+                }
             }
         }
         catch(SQLException throwables)
@@ -1772,13 +1775,13 @@ public class DBAppointments
                         {
                             overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
                                     a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
-                            "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".";
+                            "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".\n";
                         }
                         else
                         {
                             overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
                                     a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
-                                    "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".";
+                                    "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".\n";
                         }
                     }
                     else if(appt.getContactID() == a.getContactID())
@@ -1789,7 +1792,7 @@ public class DBAppointments
                                     a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
                                     "Choose a different appointment time for " + DBContacts.getContactNameByID(a.getContactID()) + ".\n"+
                             "Alternatively, you may select a different consultant for this appointment with \n" +
-                            DBCustomers.getCustomerNameByID(appt.getCustomerID())+".";
+                            DBCustomers.getCustomerNameByID(appt.getCustomerID())+".\n";
                         }
                         else
                         {
@@ -1797,7 +1800,22 @@ public class DBAppointments
                                     a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
                                     "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".\n"+
                                     "Alternatively, you may select a different consultant for this appointment with \n" +
-                                    DBCustomers.getCustomerNameByID(appt.getCustomerID())+".";
+                                    DBCustomers.getCustomerNameByID(appt.getCustomerID()) +".\n";
+                        }
+                    }
+                    else if(appt.getCustomerID() == a.getCustomerID())
+                    {
+                        if(overlappingAppts.isEmpty())
+                        {
+                            overlappingAppts = "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                    a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
+                                    "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".\n";
+                        }
+                        else
+                        {
+                            overlappingAppts = overlappingAppts + "Appointment " + a.getApptID() + ": " + a.getTitle() + " starting at " +
+                                    a.getStart() + "\n" + " and ending at " + a.getEnd() + " overlaps with this appointment.\n"+
+                                    "Choose a different appointment time for " + DBCustomers.getCustomerNameByID(a.getCustomerID()) + ".\n";
                         }
                     }
                 }
