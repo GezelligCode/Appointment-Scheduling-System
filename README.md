@@ -1,3 +1,3 @@
-# WGUSchedulingApp
- WGU Software II Java Project
+# Appointment Scheduling System
+ WGU Software II Java Project: GUI Appointment Scheduling System with MySQL Backend
 My first full-stack project and CRUD application, using Java and JavaFX. This is an application that provides scheduling services and interfaces with a MySQL database for persistent data storage. The application essentially revolves around three core objects: 1) Users, which refer to the entities that operate the software, 2) Customers, and 3) Consultants. Customers are the external parties with whom consultants have appointments with. The application allows users to create, read, update, and modify customers and consultants from the MySQL database, with a front end that displays all the results.  The project structure follows the Database Access Object (DAO) organization, as well as following object-oriented programming principles. 
