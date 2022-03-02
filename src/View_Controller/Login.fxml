@@ -9,8 +9,8 @@
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cbd0d6" height="229.0" layoutX="42.0" layoutY="90.0" stroke="BLACK" strokeType="INSIDE" width="523.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffc921" height="133.0" layoutX="212.0" layoutY="133.0" stroke="BLACK" strokeType="INSIDE" width="182.0" />
-      <PasswordField fx:id="userPassword" layoutX="229.0" layoutY="224.0" onAction="#loginHandler" promptText="Password" text="53689194407" />
-      <TextField fx:id="userName" layoutX="229.0" layoutY="164.0" promptText="User name" text="U081Ko" />
+      <PasswordField fx:id="userPassword" layoutX="229.0" layoutY="224.0" onAction="#loginHandler" promptText="Password" text="5b30f68e" />
+      <TextField fx:id="userName" layoutX="229.0" layoutY="164.0" promptText="User name" text="b3a0c1309826f0" />
       <Label fx:id="loginLabel" layoutX="213.0" layoutY="114.0" prefHeight="18.0" prefWidth="149.0" text="LOGIN" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="12.0" />

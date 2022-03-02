@@ -3,8 +3,8 @@ package Credentials;
 /** Credentials Class*/
 public class Credentials
 {
-    private static final String username = "U081Ko";
-    private static final String password = "53689194407";
+    private static final String username = "b3a0c1309826f0";
+    private static final String password = "5b30f68e";
     private static final String usernameTest = "test";
     private static final String passwordTest = "test";
 

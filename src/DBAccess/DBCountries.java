@@ -23,7 +23,7 @@ public class DBCountries
 
         try
         {
-            String sql = "SELECT * FROM countries WHERE Country_ID = 38 OR Country_ID = 230 OR Country_ID = 231";
+            String sql = "SELECT * FROM countries";
 
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
 

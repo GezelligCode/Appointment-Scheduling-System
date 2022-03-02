@@ -13,8 +13,8 @@ public class DBConnection
     // JDBC URL parse
     private static final String protocol = "jdbc";
     private static final String vendorName = ":mysql:";
-    private static final String ipAddress = "//wgudb.ucertify.com:3306/";
-    private static final String dbName = "WJ081Ko";
+    private static final String ipAddress = "//us-cdbr-east-05.cleardb.net:3306/";
+    private static final String dbName = "heroku_1e4cf119be0ff4a";
 
     // JDBC URL
     private static final String jdbcURL = protocol + vendorName + ipAddress + dbName;
@@ -26,10 +26,10 @@ public class DBConnection
     private static Connection conn = null;
 
     // Username
-    private static final String username = "U081Ko";
+    private static final String username = "b3a0c1309826f0";
 
     // Password
-    private static final String password = "53689194407";
+    private static final String password = "5b30f68e";
 
     /** Establishes a connection with the database.
      *

@@ -442,3 +442,24 @@ Timestamp - 07/2021/29 18:03:01
 Successful Login: 
 User ID - 2, User Name - U081Ko
 Timestamp - 07/2021/29 18:12:36
+Failed Login: 
+User Name Entered - b3a0c1309826f0
+Timestamp - 03/2022/01 19:56:13
+Successful Login: 
+User ID - 0, User Name - b3a0c1309826f0
+Timestamp - 03/2022/01 20:00:38
+Successful Login: 
+User ID - 4, User Name - b3a0c1309826f0
+Timestamp - 03/2022/01 20:07:16
+Successful Login: 
+User ID - 4, User Name - b3a0c1309826f0
+Timestamp - 03/2022/01 20:14:38
+Successful Login: 
+User ID - 4, User Name - b3a0c1309826f0
+Timestamp - 03/2022/01 20:15:00
+Successful Login: 
+User ID - 4, User Name - b3a0c1309826f0
+Timestamp - 03/2022/01 20:17:34
+Successful Login: 
+User ID - 4, User Name - b3a0c1309826f0
+Timestamp - 03/2022/01 20:20:30
